@@ -64,6 +64,3 @@ sorry
 
 example {u v : ℚ} (h₁ : 4 * u + v = 3) (h₂ : v = 2) : u = 1 / 4 :=
 sorry
-
-example {a b : ℝ} (h₁ : a + 2 * b = 4) (h₂ : a - b = 1) : a = 2 :=
-sorry

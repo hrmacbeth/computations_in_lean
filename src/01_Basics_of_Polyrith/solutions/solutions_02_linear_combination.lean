@@ -35,6 +35,3 @@ by linear_combination 1 / 2 * h₁ + 1 / 2 * h₂
 
 example {u v : ℚ} (h₁ : 4 * u + v = 3) (h₂ : v = 2) : u = 1 / 4 :=
 by linear_combination 1 / 4 * h₁ - 1 / 4 * h₂
-
-example {a b : ℝ} (h₁ : a + 2 * b = 4) (h₂ : a - b = 1) : a = 2 :=
-by linear_combination 1 / 3 * h₁ + 2 / 3 * h₂
