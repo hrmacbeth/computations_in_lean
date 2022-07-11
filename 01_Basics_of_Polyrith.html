@@ -122,7 +122,8 @@ linear inequalities.  If we were working over a linear ordered field such as <sp
 <p>But over  <span class="math notranslate nohighlight">\(\mathbb{C}\)</span>, which has no order, we could only invoke <code class="docutils literal notranslate"><span class="pre">linarith</span></code> by first taking
 real and imaginary parts of both sides &#8211; and over a general field this wouldn&#8217;t work at all.</p>
 <p>In this section we will introduce a tactic, <code class="docutils literal notranslate"><span class="pre">linear_combination</span></code>, which is well-adapted to
-algebra over general commutative rings.  Here is how our example is solved using
+algebra over general commutative rings.  This is a very new tactic, contributed to mathlib in
+January 2022 by Brown undergraduate Abby Goldberg. Here is how our example is solved using
 <code class="docutils literal notranslate"><span class="pre">linear_combination</span></code>.</p>
 <div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">example</span> <span class="o">{</span><span class="n">a</span> <span class="n">b</span> <span class="o">:</span> <span class="n">&#8450;</span><span class="o">}</span> <span class="o">(</span><span class="n">h&#8321;</span> <span class="o">:</span> <span class="n">a</span> <span class="bp">-</span> <span class="mi">5</span> <span class="bp">*</span> <span class="n">b</span> <span class="bp">=</span> <span class="mi">4</span><span class="o">)</span> <span class="o">(</span><span class="n">h&#8322;</span> <span class="o">:</span> <span class="n">b</span> <span class="bp">+</span> <span class="mi">2</span> <span class="bp">=</span> <span class="mi">3</span><span class="o">)</span> <span class="o">:</span> <span class="n">a</span> <span class="bp">=</span> <span class="mi">9</span> <span class="o">:=</span>
 <span class="kd">by</span> <span class="n">linear_combination</span> <span class="n">h&#8321;</span> <span class="bp">+</span> <span class="mi">5</span> <span class="bp">*</span> <span class="n">h&#8322;</span>
@@ -274,10 +275,13 @@ amounts to doing a <code class="docutils literal notranslate"><span class="pre">
 <section id="basics-of-the-polyrith-tactic">
 <span id="polyrith"></span><h2><span class="section-number">1.4. </span>Basics of the polyrith tactic<a class="headerlink" href="#basics-of-the-polyrith-tactic" title="Permalink to this headline">&#61633;</a></h2>
 <p>Surprise!  None of the work we did in the last two sections finding the coefficients for
-<code class="docutils literal notranslate"><span class="pre">linear_combination</span></code> by hand was necessary.  A brand new tactic, <code class="docutils literal notranslate"><span class="pre">polyrith</span></code>, will obtain them
-from the Sage function
+<code class="docutils literal notranslate"><span class="pre">linear_combination</span></code> by hand was necessary.  A brand new tactic, <code class="docutils literal notranslate"><span class="pre">polyrith</span></code>, contributed to
+mathlib in July 2022 by Brown undergraduate Dhruv Bhatia, will obtain them from the Sage function
 <a class="reference external" href="https://doc.sagemath.org/html/en/reference/polynomial_rings/sage/rings/polynomial/multi_polynomial_libsingular.html#sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular.lift">MPolynomial_libsingular.lift</a>,
 so long as you have an internet connection.</p>
+<p>(The tactic also requires that your <code class="docutils literal notranslate"><span class="pre">python3</span></code> have the <code class="docutils literal notranslate"><span class="pre">requests</span></code> package installed.  This is
+probably already the case, but if you encounter bugs that look like they might be caused by this,
+install the package by running <code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">-m</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">requests</span></code> at the command line.)</p>
 <p>Here is <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> being let loose on all the examples from the previous two sections.  In each
 case, click on the blue &#8220;Try this&#8221; underline, to replace the <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> invocation (which will
 query Sage each time) with an automatically-computed <code class="docutils literal notranslate"><span class="pre">linear_combination</span></code> which stores its result.</p>
