@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Algebraic computations in Lean &mdash; Algebraic computations in Lean 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="1. Basics of polyrith" href="01_Basics_of_Polyrith.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="#" class="icon icon-home"> Algebraic computations in Lean
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="01_Basics_of_Polyrith.html">1. Basics of polyrith</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_Using_Polyrith.html">2. Using polyrith</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_Nonsingularity_of_Curves.html">3. Nonsingularity of algebraic curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_Combining_Tactics.html">4. Combining tactics</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Algebraic computations in Lean</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+      <li>Algebraic computations in Lean</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="algebraic-computations-in-lean">
+<h1>Algebraic computations in Lean<a class="headerlink" href="#algebraic-computations-in-lean" title="Permalink to this headline">&#61633;</a></h1>
+<p>This is a tutorial on doing proofs with a computational flavour using the
+<a class="reference external" href="https://github.com/leanprover-community/mathlib">mathlib</a> library for the
+<a class="reference external" href="https://leanprover.github.io/">Lean 3</a> proof assistant.</p>
+<p>The phrase &#8220;computational flavour&#8221; might need some explanation. These are not heavy computations
+that require two hours running Mathematica, but simply the kind of mildly-painful calculation that
+might take a couple of paragraphs on paper.</p>
+<p>Currently the tutorial focuses on the brand new tactic <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> and on <code class="docutils literal notranslate"><span class="pre">field_simp</span></code>.  There
+are several other powerful tactics which are commonly needed for &#8220;computational&#8221; proofs, notably
+<code class="docutils literal notranslate"><span class="pre">norm_num</span></code>, <code class="docutils literal notranslate"><span class="pre">norm_cast</span></code> (and variants), and <code class="docutils literal notranslate"><span class="pre">(n)linarith</span></code>. These other tactics are discussed
+in context as the need arises, but this tutorial might eventually be extended to cover them too.</p>
+<p>This is an intermediate-level tutorial, requiring familiarity with the syntax of Lean as covered in
+approximately the first two chapters of <a class="reference external" href="https://leanprover-community.github.io/mathematics_in_lean/">Mathematics in Lean</a>.  But the focus of the exercises and
+presentation is on the computations, so don&#8217;t worry about understanding every detail of the syntax
+if you can pick up the general idea.</p>
+<p>This tutorial is new (July 2022) and feedback is very welcome. If you try this tutorial, come to
+the Lean chat room on <a class="reference external" href="https://leanprover.zulipchat.com/">Zulip</a> and say hello!</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="01_Basics_of_Polyrith.html">1. Basics of polyrith</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="01_Basics_of_Polyrith.html#housekeeping">1.1. Housekeeping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01_Basics_of_Polyrith.html#basics-of-the-linear-combination-tactic">1.2. Basics of the linear_combination tactic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01_Basics_of_Polyrith.html#linear-combination-for-nonlinear-equations">1.3. linear_combination for nonlinear equations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01_Basics_of_Polyrith.html#basics-of-the-polyrith-tactic">1.4. Basics of the polyrith tactic</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="02_Using_Polyrith.html">2. Using polyrith</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="02_Using_Polyrith.html#chebyshev-polynomials">2.1. Chebyshev polynomials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_Using_Polyrith.html#isometries-of-the-complex-plane">2.2. Isometries of the complex plane</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_Using_Polyrith.html#double-cover-of-so-3">2.3. Double cover of SO(3, &#8477;)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="03_Nonsingularity_of_Curves.html">3. Nonsingularity of algebraic curves</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="03_Nonsingularity_of_Curves.html#powers-and-case-splits">3.1. Powers and case splits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_Nonsingularity_of_Curves.html#klein-quartic">3.2. Klein quartic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_Nonsingularity_of_Curves.html#weierstrass-form-elliptic-curve">3.3. Weierstrass-form elliptic curve</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="04_Combining_Tactics.html">4. Combining tactics</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="04_Combining_Tactics.html#basics-of-field-simp">4.1. Basics of field_simp</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_Combining_Tactics.html#stereographic-projection">4.2. Stereographic projection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_Combining_Tactics.html#a-binomial-coefficient-identity">4.3. A binomial coefficient identity</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<p><strong>Acknowledgements:</strong> I have raided the mathlib contributions of a number of people for examples in
+this tutorial.  Thank you to Johan Commelin, Julian K&#252;lshammer and Fran&#231;ois
+Sunatori! And particular thanks to Jeremy Avigad, for sharing the Sphinx template for the tutorial,
+and Rob Lewis, for many conversations about automation in Lean.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="01_Basics_of_Polyrith.html" class="btn btn-neutral float-right" title="1. Basics of polyrith" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Heather Macbeth.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2. Using polyrith &mdash; Algebraic computations in Lean 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="3. Nonsingularity of algebraic curves" href="03_Nonsingularity_of_Curves.html" />
+    <link rel="prev" title="1. Basics of polyrith" href="01_Basics_of_Polyrith.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Algebraic computations in Lean
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_Basics_of_Polyrith.html">1. Basics of polyrith</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. Using polyrith</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#chebyshev-polynomials">2.1. Chebyshev polynomials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#isometries-of-the-complex-plane">2.2. Isometries of the complex plane</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#double-cover-of-so-3">2.3. Double cover of SO(3, &#8477;)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="03_Nonsingularity_of_Curves.html">3. Nonsingularity of algebraic curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_Combining_Tactics.html">4. Combining tactics</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Algebraic computations in Lean</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li><span class="section-number">2. </span>Using polyrith</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/02_Using_Polyrith.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="using-polyrith">
+<span id="id1"></span><h1><span class="section-number">2. </span>Using polyrith<a class="headerlink" href="#using-polyrith" title="Permalink to this headline">&#61633;</a></h1>
+<section id="chebyshev-polynomials">
+<span id="chebyshev"></span><h2><span class="section-number">2.1. </span>Chebyshev polynomials<a class="headerlink" href="#chebyshev-polynomials" title="Permalink to this headline">&#61633;</a></h2>
+<p>The Chebyshev polynomials (of the first kind) are a sequence of polynomials <span class="math notranslate nohighlight">\(T_n(x)\)</span> defined
+recursively:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{cases}
+T_0(x)&amp;=1\\
+T_1(x)&amp;=x\\
+\text{for $n\in\mathbb{N}$, } T_{n+2}(x)&amp;=2xT_{n+1}(x)-T_n(x).
+\end{cases}\end{split}\]</div>
+<p>So <span class="math notranslate nohighlight">\(T_2(x)=2x^2-1\)</span>, <span class="math notranslate nohighlight">\(T_3(x)=4x^3-3x\)</span>, etc.</p>
+<p>We express the sequence of Chebyshev polynomials in Lean as a function from the natural numbers
+<code class="docutils literal notranslate"><span class="pre">&#8469;</span></code> to the integer-coefficient polynomials <code class="docutils literal notranslate"><span class="pre">&#8484;[X]</span></code>, defined recursively.</p>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">noncomputable</span> <span class="kd">def</span> <span class="n">T</span> <span class="o">:</span> <span class="n">&#8469;</span> <span class="bp">&#8594;</span> <span class="n">&#8484;</span><span class="o">[</span><span class="n">X</span><span class="o">]</span>
+<span class="bp">|</span> <span class="mi">0</span>       <span class="o">:=</span> <span class="mi">1</span>
+<span class="bp">|</span> <span class="mi">1</span>       <span class="o">:=</span> <span class="n">X</span>
+<span class="bp">|</span> <span class="o">(</span><span class="n">n</span> <span class="bp">+</span> <span class="mi">2</span><span class="o">)</span> <span class="o">:=</span> <span class="mi">2</span> <span class="bp">*</span> <span class="n">X</span> <span class="bp">*</span> <span class="n">T</span> <span class="o">(</span><span class="n">n</span> <span class="bp">+</span> <span class="mi">1</span><span class="o">)</span> <span class="bp">-</span> <span class="n">T</span> <span class="n">n</span>
+
+<span class="c1">-- now record the three pieces of the recursive definition for easy access</span>
+<span class="kd">lemma</span> <span class="n">T_zero</span> <span class="o">:</span> <span class="n">T</span> <span class="mi">0</span> <span class="bp">=</span> <span class="mi">1</span> <span class="o">:=</span> <span class="n">rfl</span>
+<span class="kd">lemma</span> <span class="n">T_one</span> <span class="o">:</span> <span class="n">T</span> <span class="mi">1</span> <span class="bp">=</span> <span class="n">X</span> <span class="o">:=</span> <span class="n">rfl</span>
+<span class="kd">lemma</span> <span class="n">T_add_two</span> <span class="o">(</span><span class="n">n</span> <span class="o">:</span> <span class="n">&#8469;</span><span class="o">)</span> <span class="o">:</span> <span class="n">T</span> <span class="o">(</span><span class="n">n</span> <span class="bp">+</span> <span class="mi">2</span><span class="o">)</span> <span class="bp">=</span> <span class="mi">2</span> <span class="bp">*</span> <span class="n">X</span> <span class="bp">*</span> <span class="n">T</span> <span class="o">(</span><span class="n">n</span> <span class="bp">+</span> <span class="mi">1</span><span class="o">)</span> <span class="bp">-</span> <span class="n">T</span> <span class="n">n</span> <span class="o">:=</span> <span class="kd">by</span> <span class="n">rw</span> <span class="n">T</span>
+</pre></div>
+</div>
+<p>In this section we will prove the multiplication formula for Chebyshev polynomials:</p>
+<div class="admonition-theorem admonition">
+<p class="admonition-title">Theorem</p>
+<p>For all natural numbers <span class="math notranslate nohighlight">\(m\)</span> and <span class="math notranslate nohighlight">\(k\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[2 T_m(x)T_{m+k}(x) = T_{2m+k}(x)+T_k(x).\]</div>
+</div>
+<p>This is proved by induction on <span class="math notranslate nohighlight">\(m\)</span>: if the formula is true for <span class="math notranslate nohighlight">\(m\)</span>
+and <span class="math notranslate nohighlight">\(m+1\)</span> (for all <span class="math notranslate nohighlight">\(k\)</span>), then it is true for <span class="math notranslate nohighlight">\(m+2\)</span> (for all <span class="math notranslate nohighlight">\(k\)</span>). I leave
+the two base cases as exercises. Here is the paper proof of the inductive step:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}2T_{m+2}T_{(m+2)+k}
+&amp;=2\left(2xT_{m+1}-T_m\right)T_{m+k+2}\\
+&amp;=2x\left(2T_{m+1}T_{(m+1)+(k+1)}\right)-2T_mT_{m+(k+2)}\\
+&amp;=2x\left(T_{2(m+1)+(k+1)}+T_{k+1}\right)-\left(T_{2m+(k+2)}+T_{k+2}\right)\\
+&amp;=\left(2xT_{2m+k+3}-T_{2m+k+2}\right)+\left(2xT_{k+1}-T_{k+2}\right)\\
+&amp;=T_{2(m+2)+k}+T_{k}.\end{split}\]</div>
+<p>Notice that two facts are being invoked (each repeatedly) during this proof: the recurrence
+relation, in Lean <code class="docutils literal notranslate"><span class="pre">T_add_two</span></code>, and the inductive hypothesis of the theorem, which within the
+proof below will carry the same name, <code class="docutils literal notranslate"><span class="pre">mul_T</span></code>, as the theorem itself.  To make <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> do
+this proof you should determine precisely which input values these facts are being used with in the
+above proof, and state them in Lean with those input values.  See the broken proof below for the
+basic idea.</p>
+<p>There is one subtlety. It will happen that the same natural number appears as the index of the
+sequence <cite>T</cite>, but in more than one way.  For example, in the setup below, both <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">+</span> <span class="pre">37</span></code> and
+<code class="docutils literal notranslate"><span class="pre">37</span> <span class="pre">+</span> <span class="pre">m</span></code> appear as indices.  This prevents <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> from parsing <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">(m</span> <span class="pre">+</span> <span class="pre">37)</span></code> and
+<code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">(37</span> <span class="pre">+</span> <span class="pre">m)</span></code> as the same token.  So, before running <code class="docutils literal notranslate"><span class="pre">polyrith</span></code>, normalize all indices by
+running <code class="docutils literal notranslate"><span class="pre">ring_nf</span></code> (&#8220;ring normal form&#8221;) simultaneously on all the hypotheses you care about and on
+the goal.</p>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">lemma</span> <span class="n">mul_T</span> <span class="o">:</span> <span class="bp">&#8704;</span> <span class="n">m</span> <span class="o">:</span> <span class="n">&#8469;</span><span class="o">,</span> <span class="bp">&#8704;</span> <span class="n">k</span><span class="o">,</span> <span class="mi">2</span> <span class="bp">*</span> <span class="n">T</span> <span class="n">m</span> <span class="bp">*</span> <span class="n">T</span> <span class="o">(</span><span class="n">m</span> <span class="bp">+</span> <span class="n">k</span><span class="o">)</span> <span class="bp">=</span> <span class="n">T</span> <span class="o">(</span><span class="mi">2</span> <span class="bp">*</span> <span class="n">m</span> <span class="bp">+</span> <span class="n">k</span><span class="o">)</span> <span class="bp">+</span> <span class="n">T</span> <span class="n">k</span>
+<span class="bp">|</span> <span class="mi">0</span> <span class="o">:=</span> <span class="kd">begin</span>
+    <span class="gr">sorry</span><span class="o">,</span>
+  <span class="kd">end</span>
+<span class="bp">|</span> <span class="mi">1</span> <span class="o">:=</span> <span class="kd">begin</span>
+    <span class="gr">sorry</span><span class="o">,</span>
+  <span class="kd">end</span>
+<span class="bp">|</span> <span class="o">(</span><span class="n">m</span> <span class="bp">+</span> <span class="mi">2</span><span class="o">)</span> <span class="o">:=</span> <span class="kd">begin</span>
+    <span class="n">intros</span> <span class="n">k</span><span class="o">,</span>
+    <span class="k">have</span> <span class="n">H&#8321;</span> <span class="o">:=</span> <span class="n">mul_T</span> <span class="o">(</span><span class="n">m</span> <span class="bp">+</span> <span class="mi">37</span><span class="o">)</span> <span class="o">(</span><span class="n">k</span> <span class="bp">*</span> <span class="mi">37</span><span class="o">),</span> <span class="c1">-- not actually a relevant pair of input values!</span>
+    <span class="k">have</span> <span class="n">h&#8321;</span> <span class="o">:=</span> <span class="n">T_add_two</span> <span class="mi">7</span><span class="o">,</span> <span class="c1">-- not actually a relevant input value!</span>
+    <span class="k">have</span> <span class="n">h&#8322;</span> <span class="o">:=</span> <span class="n">T_add_two</span> <span class="o">(</span><span class="mi">37</span> <span class="bp">+</span> <span class="n">m</span><span class="o">),</span> <span class="c1">-- not actually a relevant input value!</span>
+    <span class="n">ring_nf</span> <span class="n">at</span> <span class="n">H&#8321;</span> <span class="n">h&#8321;</span> <span class="n">h&#8322;</span> <span class="bp">&#8866;</span><span class="o">,</span>
+    <span class="n">polyrith</span><span class="o">,</span>
+  <span class="kd">end</span>
+</pre></div>
+</div>
+</section>
+<section id="isometries-of-the-complex-plane">
+<span id="isometry-plane"></span><h2><span class="section-number">2.2. </span>Isometries of the complex plane<a class="headerlink" href="#isometries-of-the-complex-plane" title="Permalink to this headline">&#61633;</a></h2>
+<p>Let us identify the Euclidean plane with the complex numbers <span class="math notranslate nohighlight">\(\mathbb{C}\)</span>.  In this section
+we prove the following lemma:</p>
+<div class="admonition-lemma admonition">
+<p class="admonition-title">Lemma</p>
+<p>If <span class="math notranslate nohighlight">\(f:\mathbb{C}\to\mathbb{C}\)</span> is a
+<strong>real-linear</strong> isometry of the plane fixing <span class="math notranslate nohighlight">\(1\)</span>, then <span class="math notranslate nohighlight">\(f(i)\)</span> is either <span class="math notranslate nohighlight">\(i\)</span>
+or <span class="math notranslate nohighlight">\(-i\)</span>.</p>
+</div>
+<p>This lemma
+<a class="reference external" href="https://leanprover-community.github.io/mathlib_docs/find/linear_isometry_complex_aux/src">appears in mathlib</a>
+in the proof of the classical theorem that isometries <span class="math notranslate nohighlight">\(f:\mathbb{C}\to\mathbb{C}\)</span> of the
+plane are of the two forms</p>
+<div class="math notranslate nohighlight">
+\[f(z)=az+b,\qquad f(z)=a\overline{z}+b\]</div>
+<p>for <span class="math notranslate nohighlight">\(a,b\in\mathbb{C}\)</span> with <span class="math notranslate nohighlight">\(|a|=1\)</span>: compositions of a translation, a rotation, and
+(possibly) a reflection.  (An isometry has to be affine; by postcomposition with a translation we
+can arrange that <span class="math notranslate nohighlight">\(f(0)=0\)</span>, i.e. <span class="math notranslate nohighlight">\(f\)</span> is linear; by postcomposition with a rotation we
+can arrange that <span class="math notranslate nohighlight">\(f(1)=1\)</span>, and then after the above lemma <span class="math notranslate nohighlight">\(f\)</span> is determined on the real
+basis <span class="math notranslate nohighlight">\(\{1, i\}\)</span> for <span class="math notranslate nohighlight">\(\mathbb{C}\)</span>, hence everywhere by linearity.</p>
+<p>Real-linear isometries from <span class="math notranslate nohighlight">\(\mathbb{C}\)</span> to <span class="math notranslate nohighlight">\(\mathbb{C}\)</span> are expressed in
+Lean by the type <code class="docutils literal notranslate"><span class="pre">&#8450;</span> <span class="pre">&#8594;&#8343;&#7522;[&#8477;]</span> <span class="pre">&#8450;</span></code>.  The <code class="docutils literal notranslate"><span class="pre">&#8343;&#7522;</span></code> subscript stands
+for &#8220;linear isometry&#8221;, and the <code class="docutils literal notranslate"><span class="pre">[&#8477;]</span></code> denotes the scalar field to consider for the linearity.</p>
+<p>The lemma is proved on paper as follows.  Since <span class="math notranslate nohighlight">\(f\)</span> is linear and norm-preserving and
+<span class="math notranslate nohighlight">\(f(1)=1\)</span>, we have</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}f(i)\overline{f(i)}&amp;=|f(i)|^2\\
+  &amp;=|i|^2\\
+  &amp;=i\overline{i},\\
+\left(f(i)-1\right)\left(\overline{f(i)} - 1\right)
+  &amp;=\left(f(i)-f(1)\right)\left(\overline{f(i)} - \overline{f(1)}\right)\\
+  &amp;=f(i-1)\overline{f(i - 1)}\\
+  &amp;=|f(i-1)|^2\\
+  &amp;=|i-1|^2\\
+  &amp;=(i-1)(\overline{i}-1).\end{split}\]</div>
+<div class="admonition-exercise admonition">
+<p class="admonition-title">Exercise</p>
+<p>Deduce from these two facts that</p>
+<div class="math notranslate nohighlight">
+\[\left(f(i) - i\right)\left(\overline{f(i)}-\overline{-i}\right) = 0.\]</div>
+<p>(Hint: Subtract and factor.)</p>
+</div>
+<p>This fixes <span class="math notranslate nohighlight">\(f(i)\)</span> as either <span class="math notranslate nohighlight">\(i\)</span> (if the left factor vanishes) or <span class="math notranslate nohighlight">\(-i\)</span> (if the
+right factor vanishes).</p>
+<p>We present the skeleton of this argument in Lean below, with the exercise indicated above left as a
+sorry.  A tricky point is that <code class="docutils literal notranslate"><span class="pre">linear_combination</span></code>/<code class="docutils literal notranslate"><span class="pre">polyrith</span></code>
+does not know facts specific to the ring of complex numbers, such as that <span class="math notranslate nohighlight">\(i^2=1\)</span> or that
+<span class="math notranslate nohighlight">\(\overline{i}=-i\)</span>.  You can state any needed such facts explicitly and prove them using
+<code class="docutils literal notranslate"><span class="pre">norm_num</span></code> (of course, there are lemmas for this, but why bother memorizing them?).  Then you can
+rewrite by these facts, or just include them in the context for <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> to pick up.</p>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">example</span> <span class="o">{</span><span class="n">f</span> <span class="o">:</span> <span class="n">&#8450;</span> <span class="bp">&#8594;&#8343;&#7522;</span><span class="o">[</span><span class="n">&#8477;</span><span class="o">]</span> <span class="n">&#8450;</span><span class="o">}</span> <span class="o">(</span><span class="n">h</span> <span class="o">:</span> <span class="n">f</span> <span class="mi">1</span> <span class="bp">=</span> <span class="mi">1</span><span class="o">)</span> <span class="o">:</span> <span class="n">f</span> <span class="n">I</span> <span class="bp">=</span> <span class="n">I</span> <span class="bp">&#8744;</span> <span class="n">f</span> <span class="n">I</span> <span class="bp">=</span> <span class="bp">-</span> <span class="n">I</span> <span class="o">:=</span>
+<span class="kd">begin</span>
+  <span class="k">have</span> <span class="n">key</span> <span class="o">:</span> <span class="o">(</span><span class="n">f</span> <span class="n">I</span> <span class="bp">-</span> <span class="n">I</span><span class="o">)</span> <span class="bp">*</span> <span class="o">(</span><span class="n">conj</span> <span class="o">(</span><span class="n">f</span> <span class="n">I</span><span class="o">)</span> <span class="bp">-</span> <span class="n">conj</span> <span class="o">(</span><span class="bp">-</span> <span class="n">I</span><span class="o">))</span> <span class="bp">=</span> <span class="mi">0</span><span class="o">,</span>
+  <span class="o">{</span> <span class="k">have</span> <span class="n">H&#8321;</span> <span class="o">:=</span> <span class="n">congr_arg</span> <span class="o">(</span><span class="bp">&#955;</span> <span class="n">t</span><span class="o">,</span> <span class="o">(</span><span class="bp">&#8593;</span><span class="o">(</span><span class="n">t</span> <span class="bp">^</span> <span class="mi">2</span><span class="o">)</span> <span class="o">:</span> <span class="n">&#8450;</span><span class="o">))</span> <span class="o">(</span><span class="n">f.norm_map</span> <span class="o">(</span><span class="n">I</span> <span class="bp">-</span> <span class="mi">1</span><span class="o">)),</span>
+    <span class="k">have</span> <span class="n">H&#8322;</span> <span class="o">:=</span> <span class="n">congr_arg</span> <span class="o">(</span><span class="bp">&#955;</span> <span class="n">t</span><span class="o">,</span> <span class="o">(</span><span class="bp">&#8593;</span><span class="o">(</span><span class="n">t</span> <span class="bp">^</span> <span class="mi">2</span><span class="o">)</span> <span class="o">:</span> <span class="n">&#8450;</span><span class="o">))</span> <span class="o">(</span><span class="n">f.norm_map</span> <span class="n">I</span><span class="o">),</span>
+    <span class="n">simp</span> <span class="n">only</span> <span class="o">[</span><span class="n">h</span><span class="o">,</span> <span class="bp">&#8592;</span><span class="n">norm_sq_eq_abs</span><span class="o">]</span> <span class="k">with</span> <span class="n">complex_simps</span> <span class="n">at</span> <span class="n">H&#8321;</span> <span class="n">H&#8322;</span><span class="o">,</span>
+    <span class="gr">sorry</span> <span class="o">},</span>
+  <span class="c1">-- From `key`, we deduce that either `f I - I = 0` or `conj (f I) - conj (- I) = 0`.</span>
+  <span class="n">cases</span> <span class="n">eq_zero_or_eq_zero_of_mul_eq_zero</span> <span class="n">key</span> <span class="k">with</span> <span class="n">hI</span> <span class="n">hI</span><span class="o">,</span>
+  <span class="o">{</span> <span class="n">left</span><span class="o">,</span>
+    <span class="n">linear_combination</span> <span class="n">hI</span> <span class="o">},</span>
+  <span class="o">{</span> <span class="n">right</span><span class="o">,</span>
+    <span class="n">apply</span> <span class="o">(</span><span class="n">conj</span> <span class="o">:</span> <span class="n">&#8450;</span> <span class="bp">&#8594;+*</span> <span class="n">&#8450;</span><span class="o">)</span><span class="bp">.</span><span class="n">injective</span><span class="o">,</span>
+    <span class="n">linear_combination</span> <span class="n">hI</span> <span class="o">},</span>
+<span class="kd">end</span>
+</pre></div>
+</div>
+</section>
+<section id="double-cover-of-so-3">
+<span id="double-cover"></span><h2><span class="section-number">2.3. </span>Double cover of SO(3, &#8477;)<a class="headerlink" href="#double-cover-of-so-3" title="Permalink to this headline">&#61633;</a></h2>
+<p>In this section we construct the double cover of <span class="math notranslate nohighlight">\(SO(3,\mathbb{R})\)</span> by the unit quaternions.
+We first state the formula which will describe this double cover as a map from the quaternions
+<span class="math notranslate nohighlight">\(\mathbb{H}\)</span> to the 3 &#215; 3 matrices. It sends the quaternion <span class="math notranslate nohighlight">\(x+iy+jz+wk\)</span> to</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{pmatrix}
+x ^ 2 + y ^ 2 - z ^ 2 - w ^ 2 &amp; 2  (y z - w x) &amp; 2 (y w + z x) \\
+2 (y z + w x) &amp;   x ^ 2 + z ^ 2 - y ^ 2 - w ^ 2 &amp; 2 (z w - y x) \\
+2 (y w - z x) &amp;  2 (z w + y x) &amp; x ^ 2 + w ^ 2 - y ^ 2 - z ^ 2
+\end{pmatrix}.\end{split}\]</div>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">def</span> <span class="n">quaternion.to_matrix</span> <span class="o">(</span><span class="n">a</span> <span class="o">:</span> <span class="n">&#8461;</span><span class="o">)</span> <span class="o">:</span> <span class="n">matrix</span> <span class="o">(</span><span class="n">fin</span> <span class="mi">3</span><span class="o">)</span> <span class="o">(</span><span class="n">fin</span> <span class="mi">3</span><span class="o">)</span> <span class="n">&#8477;</span> <span class="o">:=</span>
+<span class="k">let</span> <span class="o">&#10216;</span><span class="n">x</span><span class="o">,</span> <span class="n">y</span><span class="o">,</span> <span class="n">z</span><span class="o">,</span> <span class="n">w</span><span class="o">&#10217;</span> <span class="o">:=</span> <span class="n">a</span> <span class="k">in</span>
+<span class="bp">!</span><span class="o">[</span><span class="bp">!</span><span class="o">[</span><span class="n">x</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">+</span> <span class="n">y</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">-</span> <span class="n">z</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">-</span> <span class="n">w</span> <span class="bp">^</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">2</span> <span class="bp">*</span> <span class="o">(</span><span class="n">y</span> <span class="bp">*</span> <span class="n">z</span> <span class="bp">-</span> <span class="n">w</span> <span class="bp">*</span> <span class="n">x</span><span class="o">),</span> <span class="mi">2</span> <span class="bp">*</span> <span class="o">(</span><span class="n">y</span> <span class="bp">*</span> <span class="n">w</span> <span class="bp">+</span> <span class="n">z</span> <span class="bp">*</span> <span class="n">x</span><span class="o">)],</span>
+  <span class="bp">!</span><span class="o">[</span><span class="mi">2</span> <span class="bp">*</span> <span class="o">(</span><span class="n">y</span> <span class="bp">*</span> <span class="n">z</span> <span class="bp">+</span> <span class="n">w</span> <span class="bp">*</span> <span class="n">x</span><span class="o">),</span> <span class="n">x</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">+</span> <span class="n">z</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">-</span> <span class="n">y</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">-</span> <span class="n">w</span> <span class="bp">^</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">2</span> <span class="bp">*</span> <span class="o">(</span><span class="n">z</span> <span class="bp">*</span> <span class="n">w</span> <span class="bp">-</span> <span class="n">y</span> <span class="bp">*</span> <span class="n">x</span><span class="o">)],</span>
+  <span class="bp">!</span><span class="o">[</span><span class="mi">2</span> <span class="bp">*</span> <span class="o">(</span><span class="n">y</span> <span class="bp">*</span> <span class="n">w</span> <span class="bp">-</span> <span class="n">z</span> <span class="bp">*</span> <span class="n">x</span><span class="o">),</span> <span class="mi">2</span> <span class="bp">*</span> <span class="o">(</span><span class="n">z</span> <span class="bp">*</span> <span class="n">w</span> <span class="bp">+</span> <span class="n">y</span> <span class="bp">*</span> <span class="n">x</span><span class="o">),</span> <span class="n">x</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">+</span> <span class="n">w</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">-</span> <span class="n">y</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">-</span> <span class="n">z</span> <span class="bp">^</span> <span class="mi">2</span><span class="o">]]</span>
+</pre></div>
+</div>
+<p>This turns out to be a &#8220;homomorphism of monoids&#8221;, denoted in Lean by <code class="docutils literal notranslate"><span class="pre">&#8594;*</span></code>; that is, it preserves
+multiplication and the identity.  Here is what the proof of that fact looks like.  It would be
+extremely tedious on paper, but it&#8217;s very fast in Lean, because it simply requires checking
+coefficient-wise  <span class="math notranslate nohighlight">\(9=3 \times 3\)</span> identities of real-number expressions (for the preservation
+of the identity element) and 9 identities of polynomials (for the preservation of multiplication).</p>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">def</span> <span class="n">quaternion.to_matrix_hom&#39;</span> <span class="o">:</span> <span class="n">&#8461;</span> <span class="bp">&#8594;*</span> <span class="n">matrix</span> <span class="o">(</span><span class="n">fin</span> <span class="mi">3</span><span class="o">)</span> <span class="o">(</span><span class="n">fin</span> <span class="mi">3</span><span class="o">)</span> <span class="n">&#8477;</span> <span class="o">:=</span>
+<span class="o">{</span> <span class="n">to_fun</span> <span class="o">:=</span> <span class="n">quaternion.to_matrix</span><span class="o">,</span>
+  <span class="n">map_one&#39;</span> <span class="o">:=</span> <span class="k">show</span> <span class="n">quaternion.to_matrix</span> <span class="o">&#10216;</span><span class="mi">1</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">&#10217;</span> <span class="bp">=</span> <span class="mi">1</span><span class="o">,</span> <span class="kd">begin</span>
+    <span class="n">ext</span> <span class="n">i</span> <span class="n">j</span><span class="bp">;</span> <span class="n">fin_cases</span> <span class="n">i</span><span class="bp">;</span> <span class="n">fin_cases</span> <span class="n">j</span><span class="bp">;</span>
+      <span class="n">simp</span> <span class="n">only</span> <span class="k">with</span> <span class="n">quaternion_simps</span> <span class="o">{</span> <span class="n">discharger</span> <span class="o">:=</span> <span class="bp">`</span><span class="o">[</span><span class="n">norm_num1</span><span class="o">]</span> <span class="o">}</span><span class="bp">;</span> <span class="n">norm_num</span><span class="o">,</span>
+  <span class="kd">end</span><span class="o">,</span>
+  <span class="n">map_mul&#39;</span> <span class="o">:=</span>  <span class="kd">begin</span>
+    <span class="n">rintros</span> <span class="o">&#10216;</span><span class="n">x</span><span class="o">,</span> <span class="n">y</span><span class="o">,</span> <span class="n">z</span><span class="o">,</span> <span class="n">w</span><span class="o">&#10217;</span> <span class="o">&#10216;</span><span class="n">r</span><span class="o">,</span> <span class="n">s</span><span class="o">,</span> <span class="n">t</span><span class="o">,</span> <span class="n">u</span><span class="o">&#10217;,</span>
+    <span class="k">show</span> <span class="n">quaternion.to_matrix</span> <span class="o">&#10216;</span><span class="n">_</span><span class="o">,</span> <span class="n">_</span><span class="o">,</span> <span class="n">_</span><span class="o">,</span> <span class="n">_</span><span class="o">&#10217;</span>
+      <span class="bp">=</span> <span class="n">quaternion.to_matrix</span> <span class="o">&#10216;</span><span class="n">_</span><span class="o">,</span> <span class="n">_</span><span class="o">,</span> <span class="n">_</span><span class="o">,</span> <span class="n">_</span><span class="o">&#10217;</span> <span class="bp">*</span> <span class="n">quaternion.to_matrix</span> <span class="o">&#10216;</span><span class="n">_</span><span class="o">,</span> <span class="n">_</span><span class="o">,</span> <span class="n">_</span><span class="o">,</span> <span class="n">_</span><span class="o">&#10217;,</span>
+    <span class="n">ext</span> <span class="n">i</span> <span class="n">j</span><span class="bp">;</span> <span class="n">fin_cases</span> <span class="n">i</span><span class="bp">;</span> <span class="n">fin_cases</span> <span class="n">j</span><span class="bp">;</span> <span class="n">simp</span> <span class="n">only</span> <span class="k">with</span> <span class="n">quaternion_simps</span><span class="bp">;</span> <span class="n">ring</span><span class="o">,</span>
+  <span class="kd">end</span> <span class="o">}</span>
+</pre></div>
+</div>
+<p>Now we write down a definition of the <em>unit</em> quaternions.  We give it the abstract-nonsense
+definition as the <code class="docutils literal notranslate"><span class="pre">mker</span></code> (for &#8220;monoid kernel&#8221;) of the &#8220;norm_square&#8221; monoid homomorphism
+<code class="docutils literal notranslate"><span class="pre">quaternion.norm_sq</span></code> from the quaternions to the reals; this already existed in mathlib. Then we
+prove a quick lemma that this is equivalent to the pedestrian definition, the sums of the squares
+of the four components summing to 1.</p>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">def</span> <span class="n">unit_quaternions</span> <span class="o">:</span> <span class="n">submonoid</span> <span class="n">&#8461;</span> <span class="o">:=</span>
+<span class="n">monoid_hom.mker</span> <span class="o">((</span><span class="n">quaternion.norm_sq</span> <span class="o">:</span> <span class="n">&#8461;</span> <span class="bp">&#8594;*&#8320;</span> <span class="n">&#8477;</span><span class="o">)</span> <span class="o">:</span> <span class="n">&#8461;</span> <span class="bp">&#8594;*</span> <span class="n">&#8477;</span><span class="o">)</span>
+
+<span class="kd">@[simp]</span> <span class="kd">lemma</span> <span class="n">mem_unit_quaternions</span> <span class="o">(</span><span class="n">a</span> <span class="o">:</span> <span class="n">&#8461;</span><span class="o">)</span> <span class="o">:</span>
+  <span class="n">a</span> <span class="bp">&#8712;</span> <span class="n">unit_quaternions</span> <span class="bp">&#8596;</span> <span class="n">a.re</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">+</span> <span class="n">a.im_i</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">+</span> <span class="n">a.im_j</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">+</span> <span class="n">a.im_k</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">=</span> <span class="mi">1</span> <span class="o">:=</span>
+<span class="kd">by</span> <span class="o">{</span> <span class="n">rw</span> <span class="bp">&#8592;</span> <span class="n">quaternion.norm_sq_def&#39;</span> <span class="n">a</span><span class="o">,</span> <span class="n">exact</span> <span class="n">iff.rfl</span> <span class="o">}</span>
+</pre></div>
+</div>
+<p>The 3 &#215; 3 orthogonal group is available in mathlib already, as a submonoid of the 3 x 3
+matrices. (Exercise for the reader: the monoid structure is in mathlib but no one seems yet to have
+proved it&#8217;s a <em>group</em>, i.e. closed under inversion.)</p>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="k">#check</span> <span class="n">matrix.orthogonal_group</span> <span class="o">(</span><span class="n">fin</span> <span class="mi">3</span><span class="o">)</span> <span class="n">&#8477;</span>
+<span class="c1">-- matrix.orthogonal_group &#8477; : submonoid (matrix (fin 3) (fin 3) &#8477;)</span>
+</pre></div>
+</div>
+<p>The first serious calculation is to prove that the matrix formula stated above is well-defined as a
+map from the unit quaternions to <span class="math notranslate nohighlight">\(SO(3,\mathbb{R})\)</span>.  That is, we have to prove that if
+<span class="math notranslate nohighlight">\(x+iy+jz+kw\)</span> is a unit quaternion then the formula produces an element of
+<span class="math notranslate nohighlight">\(SO(3,\mathbb{R})\)</span>.</p>
+<p>To prove this, we have to multiply it by its transpose, obtaining a 3 &#215; 3 matrix of quartic
+polynomials in <span class="math notranslate nohighlight">\(x,y,z,w\)</span>, and check entry by entry that if <span class="math notranslate nohighlight">\(x^2+y^2+z^2+w^2=1\)</span> then
+that quartic polynomial is one (respectively, zero) on (respectively, off) the diagonal.</p>
+<p>All these 9 checks can be done by <code class="docutils literal notranslate"><span class="pre">polyrith</span></code>.  Click through in your Lean file to see the proofs
+that <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> comes up with for each one.</p>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">lemma</span> <span class="n">to_matrix_mem_orthogonal</span> <span class="o">{</span><span class="n">a</span> <span class="o">:</span> <span class="n">&#8461;</span><span class="o">}</span> <span class="o">(</span><span class="n">ha</span> <span class="o">:</span> <span class="n">a</span> <span class="bp">&#8712;</span> <span class="n">unit_quaternions</span><span class="o">)</span> <span class="o">:</span>
+  <span class="n">to_matrix</span> <span class="n">a</span> <span class="bp">&#8712;</span> <span class="n">matrix.orthogonal_group</span> <span class="o">(</span><span class="n">fin</span> <span class="mi">3</span><span class="o">)</span> <span class="n">&#8477;</span> <span class="o">:=</span>
+<span class="kd">begin</span>
+  <span class="n">rw</span> <span class="n">matrix.mem_orthogonal_group_iff</span><span class="o">,</span>
+  <span class="n">cases</span> <span class="n">a</span> <span class="k">with</span> <span class="n">x</span> <span class="n">y</span> <span class="n">z</span> <span class="n">w</span><span class="o">,</span>
+  <span class="k">have</span> <span class="n">H</span> <span class="o">:</span> <span class="n">x</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">+</span> <span class="n">y</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">+</span> <span class="n">z</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">+</span> <span class="n">w</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">=</span> <span class="mi">1</span> <span class="o">:=</span> <span class="kd">by</span> <span class="n">rwa</span> <span class="o">[</span><span class="n">mem_unit_quaternions</span><span class="o">]</span> <span class="n">at</span> <span class="n">ha</span><span class="o">,</span>
+  <span class="n">ext</span> <span class="n">i</span> <span class="n">j</span><span class="o">,</span>
+  <span class="n">fin_cases</span> <span class="n">i</span><span class="bp">;</span> <span class="n">fin_cases</span> <span class="n">j</span><span class="bp">;</span> <span class="n">simp</span> <span class="n">only</span> <span class="k">with</span> <span class="n">quaternion_simps</span> <span class="o">{</span> <span class="n">discharger</span> <span class="o">:=</span> <span class="bp">`</span><span class="o">[</span><span class="n">norm_num1</span><span class="o">]</span> <span class="o">},</span>
+  <span class="o">{</span> <span class="n">polyrith</span> <span class="o">},</span>
+  <span class="o">{</span> <span class="n">polyrith</span> <span class="o">},</span>
+  <span class="o">{</span> <span class="n">polyrith</span> <span class="o">},</span>
+  <span class="o">{</span> <span class="n">polyrith</span> <span class="o">},</span>
+  <span class="o">{</span> <span class="n">polyrith</span> <span class="o">},</span>
+  <span class="o">{</span> <span class="n">polyrith</span> <span class="o">},</span>
+  <span class="o">{</span> <span class="n">polyrith</span> <span class="o">},</span>
+  <span class="o">{</span> <span class="n">polyrith</span> <span class="o">},</span>
+  <span class="o">{</span> <span class="n">polyrith</span> <span class="o">},</span>
+<span class="kd">end</span>
+</pre></div>
+</div>
+<p>So the monoid homomorphism from <span class="math notranslate nohighlight">\(\mathbb{H}\)</span> to 3 &#215; 3 matrices descends to a homomorphism
+<code class="docutils literal notranslate"><span class="pre">unit_quaternions.to_matrix_hom</span></code> from the unit quaternions to <span class="math notranslate nohighlight">\(SO(3, \mathbb{R})\)</span>, with a
+couple more lines of abstract nonsense.</p>
+<p>We now want to show that this homomorphism is a <em>double cover</em>; that is, its kernel has two
+elements, <span class="math notranslate nohighlight">\(\{1, -1\}\)</span>.</p>
+<p>There are two directions to this proof.  The easy direction is that both these elements are in the
+kernel; this is a numeric check that can be done with 2 &#215; 3 &#215; 3 applications of <code class="docutils literal notranslate"><span class="pre">norm_num</span></code>.  The
+hard direction is that an element of the kernel is one of these two.</p>
+<p>So let <span class="math notranslate nohighlight">\(x+iy+jz+kw\)</span> be an element of the kernel.  We have that <span class="math notranslate nohighlight">\(x^2+y^2+z^2+w^2=1\)</span>,
+since it is a unit quaternion, and we also have 9 further quadratic equations available about
+<span class="math notranslate nohighlight">\(x,y,z,w\)</span>: for example, by looking at the second row and first column in the matrix (in Lean
+this is the first row and zero-th column!) we have that <span class="math notranslate nohighlight">\(2(y z + w  x)=0\)</span>.</p>
+<p>We will use <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> to deduce that <span class="math notranslate nohighlight">\(y=0\)</span>, <span class="math notranslate nohighlight">\(z=0\)</span>, <span class="math notranslate nohighlight">\(w=0\)</span>,  and <span class="math notranslate nohighlight">\(x^2=1\)</span>,
+which lets us conclude that <span class="math notranslate nohighlight">\(x+iy+jz+kw = \pm 1 + 0i+0j+0k\)</span> as desired.</p>
+<p>The proof below is on the right track, but it is broken: I have not given <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> all the
+information it needs.  (I was lazy and just wrote out the result of checking the (0,1)-th
+coefficient of the matrix, as discussed above.)  Figure out what further matrix coefficients to
+check so that <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> has all the information it needs.  Or just write down all nine!</p>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">lemma</span> <span class="n">to_matrix_hom_mker</span> <span class="o">:</span> <span class="o">(</span><span class="n">to_matrix_hom.mker</span> <span class="o">:</span> <span class="n">set</span> <span class="n">unit_quaternions</span><span class="o">)</span> <span class="bp">=</span> <span class="o">{</span><span class="mi">1</span><span class="o">,</span> <span class="n">neg_one</span><span class="o">}</span> <span class="o">:=</span>
+<span class="kd">begin</span>
+  <span class="n">ext</span> <span class="n">a</span><span class="o">,</span>
+  <span class="n">obtain</span> <span class="o">&#10216;&#10216;</span><span class="n">x</span><span class="o">,</span> <span class="n">y</span><span class="o">,</span> <span class="n">z</span><span class="o">,</span> <span class="n">w</span><span class="o">&#10217;,</span> <span class="n">h</span><span class="o">&#10217;</span> <span class="o">:=</span> <span class="n">a</span><span class="o">,</span>
+  <span class="k">have</span> <span class="n">H</span> <span class="o">:</span> <span class="n">x</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">+</span> <span class="n">y</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">+</span> <span class="n">z</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">+</span> <span class="n">w</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">=</span> <span class="mi">1</span> <span class="o">:=</span> <span class="kd">by</span> <span class="n">rwa</span> <span class="o">[</span><span class="n">mem_unit_quaternions</span><span class="o">]</span> <span class="n">at</span> <span class="n">h</span><span class="o">,</span>
+  <span class="n">simp</span> <span class="n">only</span> <span class="k">with</span> <span class="n">quaternion_simps</span><span class="o">,</span>
+  <span class="n">split</span><span class="o">,</span>
+  <span class="o">{</span> <span class="c1">-- hard direction: a quaternion in the kernel is &#177;1</span>
+    <span class="n">intros</span> <span class="n">h</span><span class="o">,</span>
+    <span class="k">have</span> <span class="n">h&#8320;&#8321;</span> <span class="o">:=</span> <span class="n">congr_fun&#8322;</span> <span class="n">h</span> <span class="mi">0</span> <span class="mi">1</span><span class="o">,</span>
+    <span class="c1">-- Add more matrix entry inspections here as needed, and adjust the simplification line.</span>
+    <span class="c1">-- The `polyrith` applications that follow will be broken until you do this!</span>
+    <span class="n">simp</span> <span class="n">only</span> <span class="k">with</span> <span class="n">quaternion_simps</span> <span class="n">at</span> <span class="n">h&#8320;&#8321;</span> <span class="o">{</span> <span class="n">discharger</span> <span class="o">:=</span> <span class="bp">`</span><span class="o">[</span><span class="n">norm_num1</span><span class="o">]</span> <span class="o">},</span>
+    <span class="k">have</span> <span class="n">hy</span> <span class="o">:</span> <span class="n">y</span> <span class="bp">=</span> <span class="mi">0</span><span class="o">,</span>
+    <span class="o">{</span> <span class="n">polyrith</span> <span class="o">},</span>
+    <span class="k">have</span> <span class="n">hz</span> <span class="o">:</span> <span class="n">z</span> <span class="bp">=</span> <span class="mi">0</span><span class="o">,</span>
+    <span class="o">{</span> <span class="n">polyrith</span> <span class="o">},</span>
+    <span class="k">have</span> <span class="n">hw</span> <span class="o">:</span> <span class="n">w</span> <span class="bp">=</span> <span class="mi">0</span><span class="o">,</span>
+    <span class="o">{</span> <span class="n">polyrith</span> <span class="o">},</span>
+    <span class="k">have</span> <span class="n">hx</span> <span class="o">:</span> <span class="n">x</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">=</span> <span class="mi">1</span> <span class="bp">^</span> <span class="mi">2</span><span class="o">,</span>
+    <span class="o">{</span> <span class="n">polyrith</span> <span class="o">},</span>
+    <span class="c1">-- now do a case division depending on the two cases for `x ^ 2 = 1 ^ 2`</span>
+    <span class="n">rw</span> <span class="n">sq_eq_sq_iff_eq_or_eq_neg</span> <span class="n">at</span> <span class="n">hx</span><span class="o">,</span>
+    <span class="n">cases</span> <span class="n">hx</span><span class="o">,</span>
+    <span class="o">{</span> <span class="n">simp</span> <span class="o">[</span><span class="n">hx</span><span class="o">,</span> <span class="n">hy</span><span class="o">,</span> <span class="n">hz</span><span class="o">,</span> <span class="n">hw</span><span class="o">]</span> <span class="o">},</span>
+    <span class="o">{</span> <span class="n">simp</span> <span class="o">[</span><span class="n">hx</span><span class="o">,</span> <span class="n">hy</span><span class="o">,</span> <span class="n">hz</span><span class="o">,</span> <span class="n">hw</span><span class="o">]</span> <span class="o">}</span> <span class="o">},</span>
+  <span class="o">{</span> <span class="c1">-- easy direction: &#177;1 are in the kernel</span>
+    <span class="n">rintros</span> <span class="o">(&#10216;</span><span class="n">rfl</span><span class="o">,</span> <span class="n">rfl</span><span class="o">,</span> <span class="n">rfl</span><span class="o">,</span> <span class="n">rfl</span><span class="o">&#10217;</span> <span class="bp">|</span> <span class="o">&#10216;</span><span class="n">rfl</span><span class="o">,</span> <span class="n">rfl</span><span class="o">,</span> <span class="n">rfl</span><span class="o">,</span> <span class="n">rfl</span><span class="o">&#10217;)</span><span class="bp">;</span> <span class="n">ext</span> <span class="n">i</span> <span class="n">j</span><span class="bp">;</span> <span class="n">fin_cases</span> <span class="n">i</span><span class="bp">;</span> <span class="n">fin_cases</span> <span class="n">j</span><span class="bp">;</span>
+      <span class="n">simp</span> <span class="n">only</span> <span class="k">with</span> <span class="n">quaternion_simps</span> <span class="o">{</span> <span class="n">discharger</span> <span class="o">:=</span> <span class="bp">`</span><span class="o">[</span><span class="n">norm_num1</span><span class="o">]</span> <span class="o">}</span><span class="bp">;</span> <span class="n">norm_num</span> <span class="o">},</span>
+<span class="kd">end</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="01_Basics_of_Polyrith.html" class="btn btn-neutral float-left" title="1. Basics of polyrith" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="03_Nonsingularity_of_Curves.html" class="btn btn-neutral float-right" title="3. Nonsingularity of algebraic curves" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Heather Macbeth.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
