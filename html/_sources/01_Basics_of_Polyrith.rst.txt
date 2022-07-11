@@ -1,0 +1,17 @@
+.. _basics_of_polyrith:
+
+Basics of polyrith
+==================
+
+Housekeeping
+------------
+
+You should be reading this tutorial on the web simultaneously with scrolling through the associated
+Lean files.  This will let you see the goal state of the Lean code and do the exercises.
+
+Head over to the tutorial's GitHub repository, https://github.com/hrmacbeth/computations_in_lean,
+to download the repository to your own computer or to open it in the cloud on Gitpod.
+
+.. include:: 01_Basics_of_Polyrith/02_linear_combination.inc
+.. include:: 01_Basics_of_Polyrith/03_nonlinear_examples.inc
+.. include:: 01_Basics_of_Polyrith/04_polyrith.inc

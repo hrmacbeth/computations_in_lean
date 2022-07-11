@@ -1,0 +1,21 @@
+.. _combining_tactics:
+
+Combining tactics
+=================
+
+In this last section we cover examples where several tactics need to be combined to complete a
+computation.
+
+We will start with a discussion of the tactic ``field_simp``, which is used in working with
+fractions; it clears denominators so that ``ring`` or ``polyrith`` can be applied.
+
+Later we will give two extended examples in which ``polyrith`` and ``field_simp`` are combined as
+needed with ``norm_cast`` (and variants), to deal with casts among different number systems
+(:math:`\mathbb{N}`, :math:`\mathbb{Z}`, :math:`\mathbb{Q}`, :math:`\mathbb{R}`,
+:math:`\mathbb{C}`) and with ``(n)linarith`` (to prove inequalities).  But we will not give a
+detailed description of these other tactics.
+
+
+.. include:: 04_Combining_Tactics/01_field_simp.inc
+.. include:: 04_Combining_Tactics/02_sphere.inc
+.. include:: 04_Combining_Tactics/03_binomial.inc
