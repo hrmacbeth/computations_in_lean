@@ -4,7 +4,7 @@ Authors: Heather Macbeth
 -/
 import tactic.field_simp
 import tactic.polyrith
-import data.real.basic
+import data.complex.basic
 
 noncomputable def f : ℝ → ℝ := λ x, (1 - x)⁻¹
 

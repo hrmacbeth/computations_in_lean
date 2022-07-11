@@ -62,7 +62,7 @@ begin
   have h₁ := hdz 1,
   have h₂ := hdz 2,
   simp only [this] with poly_simps at h h₀ h₁ h₂ {discharger := `[norm_num1]},
-  { sorry },
+  sorry,
 end
 
 end klein

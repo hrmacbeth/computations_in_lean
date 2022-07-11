@@ -4,7 +4,7 @@ Authors: Heather Macbeth
 -/
 import tactic.field_simp
 import tactic.polyrith
-import data.real.basic
+import data.complex.basic
 
 
 example (a b : ℚ) (ha : a ≠ 0) (H : b = a ^ 2 + 3 * a) : b / a - a = 3 :=
@@ -27,11 +27,11 @@ begin
 end
 
 
-example {x : ℝ} (hx : x ^ 5 = 1) (hx' : x ≠ 1) : (x + 1/x) ^ 2 + (x + 1/x) - 1 = 0 :=
+example {x : ℂ} (hx : x ^ 5 = 1) (hx' : x ≠ 1) : (x + 1/x) ^ 2 + (x + 1/x) - 1 = 0 :=
 begin
   have : x ≠ 0,
   { intros h₀,
-    have : (1:ℝ) = 0 := by polyrith,
+    have : (1:ℂ) = 0 := by polyrith,
     norm_num at this, },
   field_simp,
   have h₁ : x - 1 ≠ 0,

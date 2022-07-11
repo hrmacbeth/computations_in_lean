@@ -14,9 +14,9 @@ local notation `𝕊` := {p : ℝ × ℝ | p.1 ^ 2 + p.2 ^ 2 = 1}
 /-- Stereographic projection, forward direction. This is a map from `ℝ × ℝ` to `ℝ`. It is smooth
 away from the horizontal line `p.2 = 1`.  It restricts on the unit circle to the stereographic
 projection. -/
-def stereo_to_fun (p : ℝ × ℝ) : ℝ := 2 * p.1 / (1 - p.2)
+def stereo_to_fun (p : 𝕊) : ℝ := 2 * p.1.1 / (1 - p.1.2)
 
-@[simp] lemma stereo_to_fun_apply (p : ℝ × ℝ) : stereo_to_fun p = 2 * p.1 / (1 - p.2) :=
+@[simp] lemma stereo_to_fun_apply (p : 𝕊) : stereo_to_fun p = 2 * p.1.1 / (1 - p.1.2) :=
 rfl
 
 /-- Stereographic projection, reverse direction.  This is a map from `ℝ` to the unit circle `𝕊` in
@@ -48,7 +48,7 @@ begin
 end
 
 lemma stereo_left_inv {p : 𝕊} (hp : (p : ℝ × ℝ) ≠ (0, 1)) :
-  stereo_inv_fun (stereo_to_fun ↑p) = p :=
+  stereo_inv_fun (stereo_to_fun p) = p :=
 begin
   ext1,
   obtain ⟨⟨x, y⟩, pythag⟩ := p,
@@ -71,7 +71,7 @@ begin
     linear_combination - 4 * (y - 1) ^ 3 * pythag },
 end
 
-lemma stereo_right_inv (w : ℝ) : stereo_to_fun ↑(stereo_inv_fun w) = w :=
+lemma stereo_right_inv (w : ℝ) : stereo_to_fun (stereo_inv_fun w) = w :=
 begin
   dsimp,
   have : w ^ 2 + 4 ≠ 0 := by nlinarith,
