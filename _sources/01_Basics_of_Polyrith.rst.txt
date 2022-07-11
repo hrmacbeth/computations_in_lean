@@ -6,7 +6,7 @@ Basics of polyrith
 Housekeeping
 ------------
 
-You should be reading this tutorial on the web simultaneously with scrolling through the associated
+You should be reading this tutorial simultaneously with scrolling through the associated
 Lean files.  This will let you see the goal state of the Lean code and do the exercises.
 
 Head over to the tutorial's GitHub repository, https://github.com/hrmacbeth/computations_in_lean,

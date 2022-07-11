@@ -1,8 +1,0 @@
-.. _using_polyrith:
-
-Using polyrith
-==============
-
-.. include:: 02_Using_Polyrith/01_chebyshev.inc
-.. include:: 02_Using_Polyrith/02_isometry_plane.inc
-.. include:: 02_Using_Polyrith/03_double_cover.inc
