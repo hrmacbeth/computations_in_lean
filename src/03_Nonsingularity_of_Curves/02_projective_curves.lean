@@ -69,7 +69,10 @@ end klein
 
 section weierstrass
 
+-- NB cubic depicted is y ^ 2 = x ^ 3 - x + 1
+
 variables (p q : K)
+
 
 /-- Defining polynomial for a Weierstrass-form elliptic curve zy² = x³ + pxz² + qz³ as a projective
 hypersurface in Kℙ². -/

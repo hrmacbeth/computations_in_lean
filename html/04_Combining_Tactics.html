@@ -44,7 +44,7 @@
 <li class="toctree-l1"><a class="reference internal" href="02_Using_Polyrith.html">2. Using polyrith</a></li>
 <li class="toctree-l1"><a class="reference internal" href="03_Nonsingularity_of_Curves.html">3. Nonsingularity of algebraic curves</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">4. Combining tactics</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#basics-of-field-simp">4.1. Basics of field_simp</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basics-of-the-field-simp-tactic">4.1. Basics of the field_simp tactic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#stereographic-projection">4.2. Stereographic projection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#a-binomial-coefficient-identity">4.3. A binomial coefficient identity</a></li>
 </ul>
@@ -86,8 +86,8 @@ needed with <code class="docutils literal notranslate"><span class="pre">norm_ca
 (<span class="math notranslate nohighlight">\(\mathbb{N}\)</span>, <span class="math notranslate nohighlight">\(\mathbb{Z}\)</span>, <span class="math notranslate nohighlight">\(\mathbb{Q}\)</span>, <span class="math notranslate nohighlight">\(\mathbb{R}\)</span>,
 <span class="math notranslate nohighlight">\(\mathbb{C}\)</span>) and with <code class="docutils literal notranslate"><span class="pre">(n)linarith</span></code> (to prove inequalities).  But we will not give a
 detailed description of these other tactics.</p>
-<section id="basics-of-field-simp">
-<span id="field-simp"></span><h2><span class="section-number">4.1. </span>Basics of field_simp<a class="headerlink" href="#basics-of-field-simp" title="Permalink to this headline">&#61633;</a></h2>
+<section id="basics-of-the-field-simp-tactic">
+<span id="field-simp"></span><h2><span class="section-number">4.1. </span>Basics of the field_simp tactic<a class="headerlink" href="#basics-of-the-field-simp-tactic" title="Permalink to this headline">&#61633;</a></h2>
 <p>Let us turn to <code class="docutils literal notranslate"><span class="pre">field_simp</span></code>.  Given a ring expression with division or inversion, this tactic
 will clear any denominators for which there is a proof in context that that denominator is nonzero.</p>
 <p>Here is an example: we prove that if <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span> are rational numbers, with <span class="math notranslate nohighlight">\(a\)</span>
@@ -100,7 +100,11 @@ delete the hypothesis that <span class="math notranslate nohighlight">\(a \ne 0\
 <span class="kd">end</span>
 </pre></div>
 </div>
-<p>In the following problem we prove that the unit circle admits a rational parametrization.  Notice
+<p>In the following problem we prove that the unit circle admits a rational parametrization:</p>
+<div class="math notranslate nohighlight">
+\[\left(\frac{m ^ 2 - n ^ 2} {m ^ 2 + n ^ 2}\right) ^ 2
++ \left(\frac{2 m n} {m ^ 2 + n ^ 2}\right) ^ 2 = 1.\]</div>
+<p>Notice
 the use of contraposition and of <code class="docutils literal notranslate"><span class="pre">(n)linarith</span></code> in proving the nonzeroness hypothesis; these are
 both common ingredients. Again, check that if you comment out the justification that
 <span class="math notranslate nohighlight">\(m ^ 2 + n ^ 2 \ne 0\)</span>, then <code class="docutils literal notranslate"><span class="pre">field_simp</span></code> fails to trigger.</p>

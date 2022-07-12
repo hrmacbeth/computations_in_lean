@@ -69,6 +69,7 @@ end klein
 section weierstrass
 variables (p q : K)
 
+
 /-- Defining polynomial for a Weierstrass-form elliptic curve zy² = x³ + pxz² + qz³ as a projective
 hypersurface in Kℙ². -/
 @[reducible] def weierstrass : mv_polynomial (fin 3) K :=
