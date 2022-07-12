@@ -78,6 +78,11 @@
              
   <section id="using-polyrith">
 <span id="id1"></span><h1><span class="section-number">2. </span>Using polyrith<a class="headerlink" href="#using-polyrith" title="Permalink to this headline">&#61633;</a></h1>
+<p>This section and <a class="reference internal" href="03_Nonsingularity_of_Curves.html#projective-curves"><span class="std std-ref">the next</span></a> can be read independently. They present a
+series of extended examples, showing how to transform problems into nails which the <code class="docutils literal notranslate"><span class="pre">polyrith</span></code>
+hammer can hit.</p>
+<p>The focus in this section is on making sure that <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> has all the hypotheses it needs to
+solve a problem.</p>
 <section id="chebyshev-polynomials">
 <span id="chebyshev"></span><h2><span class="section-number">2.1. </span>Chebyshev polynomials<a class="headerlink" href="#chebyshev-polynomials" title="Permalink to this headline">&#61633;</a></h2>
 <p>The Chebyshev polynomials (of the first kind) are a sequence of polynomials <span class="math notranslate nohighlight">\(T_n(x)\)</span> defined
@@ -196,7 +201,7 @@ for &#8220;linear isometry&#8221;, and the <code class="docutils literal notrans
 right factor vanishes).</p>
 <p>We present the skeleton of this argument in Lean below, with the exercise indicated above left as a
 sorry.  A tricky point is that <code class="docutils literal notranslate"><span class="pre">linear_combination</span></code>/<code class="docutils literal notranslate"><span class="pre">polyrith</span></code>
-does not know facts specific to the ring of complex numbers, such as that <span class="math notranslate nohighlight">\(i^2=1\)</span> or that
+does not know facts specific to the ring of complex numbers, such as that <span class="math notranslate nohighlight">\(i^2=-1\)</span> or that
 <span class="math notranslate nohighlight">\(\overline{i}=-i\)</span>.  You can state any needed such facts explicitly and prove them using
 <code class="docutils literal notranslate"><span class="pre">norm_num</span></code> (of course, there are lemmas for this, but why bother memorizing them?).  Then you can
 rewrite by these facts, or just include them in the context for <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> to pick up.</p>

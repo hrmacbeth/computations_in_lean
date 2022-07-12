@@ -3,6 +3,14 @@
 Using polyrith
 ==============
 
+This section and :ref:`the next<projective_curves>` can be read independently. They present a
+series of extended examples, showing how to transform problems into nails which the ``polyrith``
+hammer can hit.
+
+The focus in this section is on making sure that ``polyrith`` has all the hypotheses it needs to
+solve a problem.
+
+
 .. include:: 02_Using_Polyrith/01_chebyshev.inc
 .. include:: 02_Using_Polyrith/02_isometry_plane.inc
 .. include:: 02_Using_Polyrith/03_double_cover.inc
