@@ -30,6 +30,9 @@ ENV PATH="/home/gitpod/.local/bin:/home/gitpod/.elan/bin:${PATH}"
 # fix the infoview when the container is used on gitpod:
 ENV VSCODE_API_VERSION="1.50.0"
 
+# install python3 and requests package (for polyrith)
+RUN sudo apt-get install python3 && sudo apt-get install python3-pip && python3 -m pip install requests
+
 # ssh to github once to bypass the unknown fingerprint warning
 RUN ssh -o StrictHostKeyChecking=no github.com || true
 
