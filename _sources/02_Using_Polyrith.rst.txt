@@ -11,6 +11,6 @@ The focus in this section is on making sure that ``polyrith`` has all the hypoth
 solve a problem.
 
 
-.. include:: 02_Using_Polyrith/01_chebyshev.inc
-.. include:: 02_Using_Polyrith/02_isometry_plane.inc
-.. include:: 02_Using_Polyrith/03_double_cover.inc
+.. include:: 02_Using_Polyrith/01Chebyshev.inc
+.. include:: 02_Using_Polyrith/02IsometryPlane.inc
+.. include:: 02_Using_Polyrith/03DoubleCover.inc

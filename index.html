@@ -1,22 +1,26 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Algebraic computations in Lean &mdash; Algebraic computations in Lean 0.1 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=76e47137" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=0731ccc3" />
+
+  
     <link rel="shortcut icon" href="_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=2709fde1"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -28,11 +32,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="#" class="icon icon-home"> Algebraic computations in Lean
+
+          
+          
+          <a href="#" class="icon icon-home">
+            Algebraic computations in Lean
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -58,8 +66,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
-      <li>Algebraic computations in Lean</li>
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Algebraic computations in Lean</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -70,23 +78,29 @@
            <div itemprop="articleBody">
              
   <section id="algebraic-computations-in-lean">
-<h1>Algebraic computations in Lean<a class="headerlink" href="#algebraic-computations-in-lean" title="Permalink to this headline">&#61633;</a></h1>
+<h1>Algebraic computations in Lean<a class="headerlink" href="#algebraic-computations-in-lean" title="Link to this heading">&#61633;</a></h1>
 <p>This is a tutorial on doing proofs with a computational flavour using the
-<a class="reference external" href="https://github.com/leanprover-community/mathlib">mathlib</a> library for the
-<a class="reference external" href="https://leanprover.github.io/">Lean 3</a> proof assistant.</p>
+<a class="reference external" href="https://github.com/leanprover-community/mathlib4">Mathlib</a> library for the
+<a class="reference external" href="https://leanprover.github.io/">Lean</a> proof assistant.</p>
 <p>The phrase &#8220;computational flavour&#8221; might need some explanation. These are not heavy computations
 that require two hours running Mathematica, but simply the kind of mildly-painful calculation that
 might take a couple of paragraphs on paper.</p>
-<p>Currently the tutorial focuses on the brand new tactic <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> and on <code class="docutils literal notranslate"><span class="pre">field_simp</span></code>.  There
-are several other powerful tactics which are commonly needed for &#8220;computational&#8221; proofs, notably
-<code class="docutils literal notranslate"><span class="pre">norm_num</span></code>, <code class="docutils literal notranslate"><span class="pre">norm_cast</span></code> (and variants), and <code class="docutils literal notranslate"><span class="pre">(n)linarith</span></code>. These other tactics are discussed
-in context as the need arises, but this tutorial might eventually be extended to cover them too.</p>
+<p>The tutorial focuses on the Gr&#246;bner basis tactic <code class="docutils literal notranslate"><span class="pre">polyrith</span></code>
+and on the division-cancelling tactic <code class="docutils literal notranslate"><span class="pre">field_simp</span></code>.
+There are several other powerful tactics which are commonly needed for &#8220;computational&#8221; proofs,
+notably <code class="docutils literal notranslate"><span class="pre">norm_num</span></code>, <code class="docutils literal notranslate"><span class="pre">norm_cast</span></code> (and variants), <code class="docutils literal notranslate"><span class="pre">(n)linarith</span></code> and <code class="docutils literal notranslate"><span class="pre">gcongr</span></code>.
+These other tactics are discussed in context as the need arises.</p>
 <p>This is an intermediate-level tutorial, requiring familiarity with the syntax of Lean as covered in
 approximately the first two chapters of <a class="reference external" href="https://leanprover-community.github.io/mathematics_in_lean/">Mathematics in Lean</a>.  But the focus of the exercises and
 presentation is on the computations, so don&#8217;t worry about understanding every detail of the syntax
 if you can pick up the general idea.</p>
-<p>This tutorial is new (July 2022) and feedback is very welcome. If you try this tutorial, come to
-the Lean chat room on <a class="reference external" href="https://leanprover.zulipchat.com/">Zulip</a> and say hello!</p>
+<p>This tutorial was originally written in Lean 3 in July 2022 when <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> first appeared.
+A video of a talk at <a class="reference external" href="https://icerm.brown.edu/">ICERM</a> following that version of the tutorial
+is available in <a class="reference external" href="https://icerm.brown.edu/video_archive/?play=2896">ICERM&#8217;s video database</a>.
+The update to Lean 4 was posted in May 2024.</p>
+<p>Feedback is very welcome.
+Email me (<a class="reference external" href="https://faculty.fordham.edu/hmacbeth1/">Heather Macbeth</a>),
+or come to the Lean chat room on <a class="reference external" href="https://leanprover.zulipchat.com/">Zulip</a> and say hello!</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="01_Basics_of_Polyrith.html">1. Basics of polyrith</a><ul>
@@ -103,7 +117,7 @@ the Lean chat room on <a class="reference external" href="https://leanprover.zul
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="03_Nonsingularity_of_Curves.html">3. Nonsingularity of algebraic curves</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="03_Nonsingularity_of_Curves.html#powers-and-case-splits">3.1. Powers and case splits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_Nonsingularity_of_Curves.html#powers-and-cancellation">3.1. Powers and cancellation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="03_Nonsingularity_of_Curves.html#klein-quartic">3.2. Klein quartic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="03_Nonsingularity_of_Curves.html#weierstrass-form-elliptic-curve">3.3. Weierstrass-form elliptic curve</a></li>
 </ul>
@@ -116,9 +130,10 @@ the Lean chat room on <a class="reference external" href="https://leanprover.zul
 </li>
 </ul>
 </div>
-<p><strong>Acknowledgements:</strong> I have raided the mathlib contributions of a number of people for examples in
+<p><strong>Acknowledgements:</strong> I have raided the Mathlib contributions of a number of people for examples in
 this tutorial.  Thank you to Johan Commelin, Julian K&#252;lshammer and Fran&#231;ois
-Sunatori! And particular thanks to Jeremy Avigad, for sharing the Sphinx template for the tutorial,
+Sunatori! And particular thanks to Jeremy Avigad, for sharing the Sphinx template for the tutorial;
+Marc Masdeu and Patrick Massot, for work on the bump to Lean 4;
 and Rob Lewis, for many conversations about automation in Lean.</p>
 </section>
 
@@ -132,7 +147,7 @@ and Rob Lewis, for many conversations about automation in Lean.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Heather Macbeth.</p>
+    <p>&#169; Copyright 2022-2024, Heather Macbeth.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

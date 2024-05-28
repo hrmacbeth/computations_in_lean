@@ -1,22 +1,25 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>4. Combining tactics &mdash; Algebraic computations in Lean 0.1 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=76e47137" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=0731ccc3" />
+
+  
     <link rel="shortcut icon" href="_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=2709fde1"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -29,11 +32,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> Algebraic computations in Lean
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Algebraic computations in Lean
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -64,8 +71,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li><span class="section-number">4. </span>Combining tactics</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">4. </span>Combining tactics</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/04_Combining_Tactics.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -76,71 +83,74 @@
            <div itemprop="articleBody">
              
   <section id="combining-tactics">
-<span id="id1"></span><h1><span class="section-number">4. </span>Combining tactics<a class="headerlink" href="#combining-tactics" title="Permalink to this headline">&#61633;</a></h1>
-<p>In this last section we cover examples where several tactics need to be combined to complete a
-computation.</p>
-<p>We will start with a discussion of the tactic <code class="docutils literal notranslate"><span class="pre">field_simp</span></code>, which is used in working with
-fractions; it clears denominators so that <code class="docutils literal notranslate"><span class="pre">ring</span></code> or <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> can be applied.</p>
-<p>Later we will give two extended examples in which <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> and <code class="docutils literal notranslate"><span class="pre">field_simp</span></code> are combined as
-needed with <code class="docutils literal notranslate"><span class="pre">norm_cast</span></code> (and variants), to deal with casts among different number systems
-(<span class="math notranslate nohighlight">\(\mathbb{N}\)</span>, <span class="math notranslate nohighlight">\(\mathbb{Z}\)</span>, <span class="math notranslate nohighlight">\(\mathbb{Q}\)</span>, <span class="math notranslate nohighlight">\(\mathbb{R}\)</span>,
-<span class="math notranslate nohighlight">\(\mathbb{C}\)</span>) and with <code class="docutils literal notranslate"><span class="pre">(n)linarith</span></code> (to prove inequalities).  But we will not give a
-detailed description of these other tactics.</p>
+<span id="id1"></span><h1><span class="section-number">4. </span>Combining tactics<a class="headerlink" href="#combining-tactics" title="Link to this heading">&#61633;</a></h1>
+<p>In this last section we cover examples involving division.
+The key tactic here is called <code class="docutils literal notranslate"><span class="pre">field_simp</span></code>:
+it clears denominators of fractions,
+which gets us back to a setting in which <code class="docutils literal notranslate"><span class="pre">ring</span></code> or <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> can be applied.</p>
 <section id="basics-of-the-field-simp-tactic">
-<span id="field-simp"></span><h2><span class="section-number">4.1. </span>Basics of the field_simp tactic<a class="headerlink" href="#basics-of-the-field-simp-tactic" title="Permalink to this headline">&#61633;</a></h2>
-<p>Let us turn to <code class="docutils literal notranslate"><span class="pre">field_simp</span></code>.  Given a ring expression with division or inversion, this tactic
-will clear any denominators for which there is a proof in context that that denominator is nonzero.</p>
+<span id="field-simp"></span><h2><span class="section-number">4.1. </span>Basics of the field_simp tactic<a class="headerlink" href="#basics-of-the-field-simp-tactic" title="Link to this heading">&#61633;</a></h2>
+<p>Given a ring expression with division or inversion,
+the <code class="docutils literal notranslate"><span class="pre">field_simp</span></code> tactic will clear any denominators for which it can determine that that denominator is nonzero.</p>
 <p>Here is an example: we prove that if <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span> are rational numbers, with <span class="math notranslate nohighlight">\(a\)</span>
 nonzero, then <span class="math notranslate nohighlight">\(b = a ^ 2 + 3 a\)</span> implies <span class="math notranslate nohighlight">\(\tfrac{b}{a} - a = 3\)</span>.  Check that if you
 delete the hypothesis that <span class="math notranslate nohighlight">\(a \ne 0\)</span> then <code class="docutils literal notranslate"><span class="pre">field_simp</span></code> fails to do anything useful.</p>
-<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">example</span> <span class="o">(</span><span class="n">a</span> <span class="n">b</span> <span class="o">:</span> <span class="n">&#8474;</span><span class="o">)</span> <span class="o">(</span><span class="n">ha</span> <span class="o">:</span> <span class="n">a</span> <span class="bp">&#8800;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">(</span><span class="n">H</span> <span class="o">:</span> <span class="n">b</span> <span class="bp">=</span> <span class="n">a</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">+</span> <span class="mi">3</span> <span class="bp">*</span> <span class="n">a</span><span class="o">)</span> <span class="o">:</span> <span class="n">b</span> <span class="bp">/</span> <span class="n">a</span> <span class="bp">-</span> <span class="n">a</span> <span class="bp">=</span> <span class="mi">3</span> <span class="o">:=</span>
-<span class="kd">begin</span>
-  <span class="n">field_simp</span><span class="o">,</span>
-  <span class="n">linear_combination</span> <span class="n">H</span><span class="o">,</span>
-<span class="kd">end</span>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">example</span><span class="w"> </span><span class="o">(</span><span class="n">a</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#8474;</span><span class="o">)</span><span class="w"> </span><span class="o">(</span><span class="n">ha</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="bp">&#8800;</span><span class="w"> </span><span class="mi">0</span><span class="o">)</span><span class="w"> </span><span class="o">(</span><span class="n">H</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">a</span><span class="o">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="bp">/</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="bp">-</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kd">by</span>
+<span class="w">  </span><span class="n">field_simp</span>
+<span class="w">  </span><span class="n">linear_combination</span><span class="w"> </span><span class="n">H</span>
 </pre></div>
 </div>
 <p>In the following problem we prove that the unit circle admits a rational parametrization:</p>
 <div class="math notranslate nohighlight">
+\[\left(\frac{t ^ 2 - 1} {t ^ 2 + 1}\right) ^ 2
++ \left(\frac{2 t } {t ^ 2 + 1}\right) ^ 2 = 1.\]</div>
+<p>In this problem, the denominator, <span class="math notranslate nohighlight">\(t ^ 2 + 1\)</span>, is &#8220;obviously positive&#8221;:
+it is the sum of a square and a strictly positive number.
+In such a situation <code class="docutils literal notranslate"><span class="pre">field_simp</span></code> will find the nonzeroness of the denominator automatically without us providing it.</p>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">example</span><span class="w"> </span><span class="o">(</span><span class="n">t</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#8477;</span><span class="o">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="o">((</span><span class="n">t</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">-</span><span class="w"> </span><span class="mi">1</span><span class="o">)</span><span class="w"> </span><span class="bp">/</span><span class="w"> </span><span class="o">(</span><span class="n">t</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="mi">1</span><span class="o">))</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="o">(</span><span class="mi">2</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">t</span><span class="w">  </span><span class="bp">/</span><span class="w"> </span><span class="o">(</span><span class="n">t</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="mi">1</span><span class="o">))</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kd">by</span>
+<span class="w">  </span><span class="n">field_simp</span>
+<span class="w">  </span><span class="n">ring</span>
+</pre></div>
+</div>
+<p>Let&#8217;s tweak that problem to make it a bit harder.
+Suppose we want to prove the identity</p>
+<div class="math notranslate nohighlight">
 \[\left(\frac{m ^ 2 - n ^ 2} {m ^ 2 + n ^ 2}\right) ^ 2
-+ \left(\frac{2 m n} {m ^ 2 + n ^ 2}\right) ^ 2 = 1.\]</div>
-<p>Notice
-the use of contraposition and of <code class="docutils literal notranslate"><span class="pre">(n)linarith</span></code> in proving the nonzeroness hypothesis; these are
-both common ingredients. Again, check that if you comment out the justification that
-<span class="math notranslate nohighlight">\(m ^ 2 + n ^ 2 \ne 0\)</span>, then <code class="docutils literal notranslate"><span class="pre">field_simp</span></code> fails to trigger.</p>
-<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">example</span> <span class="o">(</span><span class="n">m</span> <span class="n">n</span> <span class="o">:</span> <span class="n">&#8477;</span><span class="o">)</span> <span class="o">(</span><span class="n">hmn</span> <span class="o">:</span> <span class="o">(</span><span class="n">m</span><span class="o">,</span> <span class="n">n</span><span class="o">)</span> <span class="bp">&#8800;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">:</span>
-  <span class="o">((</span><span class="n">m</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">-</span> <span class="n">n</span> <span class="bp">^</span> <span class="mi">2</span><span class="o">)</span> <span class="bp">/</span> <span class="o">(</span><span class="n">m</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">+</span> <span class="n">n</span> <span class="bp">^</span> <span class="mi">2</span><span class="o">))</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">+</span> <span class="o">(</span><span class="mi">2</span> <span class="bp">*</span> <span class="n">m</span> <span class="bp">*</span> <span class="n">n</span> <span class="bp">/</span> <span class="o">(</span><span class="n">m</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">+</span> <span class="n">n</span> <span class="bp">^</span> <span class="mi">2</span><span class="o">))</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">=</span> <span class="mi">1</span> <span class="o">:=</span>
-<span class="kd">begin</span>
-  <span class="k">have</span> <span class="o">:</span> <span class="n">m</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">+</span> <span class="n">n</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">&#8800;</span> <span class="mi">0</span><span class="o">,</span>
-  <span class="o">{</span> <span class="n">contrapose</span><span class="bp">!</span> <span class="n">hmn</span><span class="o">,</span>
-    <span class="k">have</span> <span class="n">hm</span> <span class="o">:</span> <span class="n">m</span> <span class="bp">=</span> <span class="mi">0</span> <span class="o">:=</span> <span class="kd">by</span> <span class="n">nlinarith</span><span class="o">,</span>
-    <span class="k">have</span> <span class="n">hn</span> <span class="o">:</span> <span class="n">n</span> <span class="bp">=</span> <span class="mi">0</span> <span class="o">:=</span> <span class="kd">by</span> <span class="n">nlinarith</span><span class="o">,</span>
-    <span class="n">simp</span> <span class="o">[</span><span class="n">hm</span><span class="o">,</span> <span class="n">hn</span><span class="o">]</span> <span class="o">},</span>
-  <span class="n">field_simp</span><span class="o">,</span>
-  <span class="n">ring</span><span class="o">,</span>
-<span class="kd">end</span>
++ \left(\frac{2 m n} {m ^ 2 + n ^ 2}\right) ^ 2 = 1,\]</div>
+<p>which is valid whenever <span class="math notranslate nohighlight">\((m,n)\ne (0,0)\)</span>.
+In this problem, <code class="docutils literal notranslate"><span class="pre">field_simp</span></code> cannot automatically prove the nonzeroness of the denominator, <span class="math notranslate nohighlight">\(m ^ 2 + n ^ 2\)</span>.
+We need to provide a proof of the nonzeroness explicitly.
+Notice the use of contraposition and of <code class="docutils literal notranslate"><span class="pre">(n)linarith</span></code> in proving the nonzeroness hypothesis;
+these are both common ingredients.
+Again, check that if you comment out the justification that <span class="math notranslate nohighlight">\(m ^ 2 + n ^ 2 \ne 0\)</span>,
+then <code class="docutils literal notranslate"><span class="pre">field_simp</span></code> fails to trigger.</p>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">example</span><span class="w"> </span><span class="o">(</span><span class="n">m</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#8477;</span><span class="o">)</span><span class="w"> </span><span class="o">(</span><span class="n">hmn</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="o">(</span><span class="n">m</span><span class="o">,</span><span class="w"> </span><span class="n">n</span><span class="o">)</span><span class="w"> </span><span class="bp">&#8800;</span><span class="w"> </span><span class="mi">0</span><span class="o">)</span><span class="w"> </span><span class="o">:</span>
+<span class="w">    </span><span class="o">((</span><span class="n">m</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">-</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="o">)</span><span class="w"> </span><span class="bp">/</span><span class="w"> </span><span class="o">(</span><span class="n">m</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="o">))</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="o">(</span><span class="mi">2</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="bp">/</span><span class="w"> </span><span class="o">(</span><span class="n">m</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="o">))</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kd">by</span>
+<span class="w">  </span><span class="k">have</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">&#8800;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kd">by</span>
+<span class="w">    </span><span class="n">contrapose</span><span class="bp">!</span><span class="w"> </span><span class="n">hmn</span>
+<span class="w">    </span><span class="n">ext</span><span class="w"> </span><span class="bp">&lt;;&gt;</span><span class="w"> </span><span class="n">dsimp</span><span class="w"> </span><span class="bp">&lt;;&gt;</span><span class="w"> </span><span class="n">nlinarith</span>
+<span class="w">  </span><span class="n">field_simp</span>
+<span class="w">  </span><span class="n">ring</span>
 </pre></div>
 </div>
 <p>In the following problem we prove that if <span class="math notranslate nohighlight">\(x\)</span> is a primitive fifth root of unity, then
 <span class="math notranslate nohighlight">\(x+1/x\)</span> satisfies the quadratic equation</p>
 <div class="math notranslate nohighlight">
 \[(x + 1/x) ^ 2 + (x + 1/x) - 1 = 0.\]</div>
-<p>We have another use of contraposition in proving one of the nonzeroness hypotheses.  In the other,
-we assume the goal did equal zero, and deduce a numeric contradiction with <code class="docutils literal notranslate"><span class="pre">norm_num</span></code>.
-Click through each invocation of <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> to see what it gives you.</p>
-<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">example</span> <span class="o">{</span><span class="n">x</span> <span class="o">:</span> <span class="n">&#8450;</span><span class="o">}</span> <span class="o">(</span><span class="n">hx</span> <span class="o">:</span> <span class="n">x</span> <span class="bp">^</span> <span class="mi">5</span> <span class="bp">=</span> <span class="mi">1</span><span class="o">)</span> <span class="o">(</span><span class="n">hx&#39;</span> <span class="o">:</span> <span class="n">x</span> <span class="bp">&#8800;</span> <span class="mi">1</span><span class="o">)</span> <span class="o">:</span> <span class="o">(</span><span class="n">x</span> <span class="bp">+</span> <span class="mi">1</span><span class="bp">/</span><span class="n">x</span><span class="o">)</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">+</span> <span class="o">(</span><span class="n">x</span> <span class="bp">+</span> <span class="mi">1</span><span class="bp">/</span><span class="n">x</span><span class="o">)</span> <span class="bp">-</span> <span class="mi">1</span> <span class="bp">=</span> <span class="mi">0</span> <span class="o">:=</span>
-<span class="kd">begin</span>
-  <span class="k">have</span> <span class="o">:</span> <span class="n">x</span> <span class="bp">&#8800;</span> <span class="mi">0</span><span class="o">,</span>
-  <span class="o">{</span> <span class="n">intros</span> <span class="n">h&#8320;</span><span class="o">,</span>
-    <span class="k">have</span> <span class="o">:</span> <span class="o">(</span><span class="mi">1</span><span class="o">:</span><span class="n">&#8450;</span><span class="o">)</span> <span class="bp">=</span> <span class="mi">0</span> <span class="o">:=</span> <span class="kd">by</span> <span class="n">polyrith</span><span class="o">,</span>
-    <span class="n">norm_num</span> <span class="n">at</span> <span class="n">this</span><span class="o">,</span> <span class="o">},</span>
-  <span class="n">field_simp</span><span class="o">,</span>
-  <span class="k">have</span> <span class="n">h&#8321;</span> <span class="o">:</span> <span class="n">x</span> <span class="bp">-</span> <span class="mi">1</span> <span class="bp">&#8800;</span> <span class="mi">0</span><span class="o">,</span>
-  <span class="o">{</span> <span class="n">contrapose</span><span class="bp">!</span> <span class="n">hx&#39;</span><span class="o">,</span>
-    <span class="n">polyrith</span> <span class="o">},</span>
-  <span class="n">apply</span> <span class="n">mul_left_cancel&#8320;</span> <span class="n">h&#8321;</span><span class="o">,</span>
-  <span class="n">polyrith</span><span class="o">,</span>
-<span class="kd">end</span>
+<p>Here the denominator nonzeroness for <code class="docutils literal notranslate"><span class="pre">field_simp</span></code> is established by a contradiction argument:
+if <span class="math notranslate nohighlight">\(x^5=0\)</span> and <span class="math notranslate nohighlight">\(x=0\)</span> then <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> can produce a numeric contradiction.
+Notice also that the nonzeroness hypothesis <span class="math notranslate nohighlight">\(x\ne 1\)</span> turns up later,
+when we follow the technique from <a class="reference internal" href="03_Nonsingularity_of_Curves.html#powers-case-splits"><span class="std std-numref">Section 3.1</span></a>.</p>
+<p>Click through each invocation of <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> to see what it gives you.</p>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">example</span><span class="w"> </span><span class="o">{</span><span class="n">x</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#8450;</span><span class="o">}</span><span class="w"> </span><span class="o">(</span><span class="n">hx</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="mi">1</span><span class="o">)</span><span class="w"> </span><span class="o">(</span><span class="n">hx&#39;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="bp">&#8800;</span><span class="w"> </span><span class="mi">1</span><span class="o">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="o">(</span><span class="n">x</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="bp">/</span><span class="w"> </span><span class="n">x</span><span class="o">)</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="o">(</span><span class="n">x</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="bp">/</span><span class="w"> </span><span class="n">x</span><span class="o">)</span><span class="w"> </span><span class="bp">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kd">by</span>
+<span class="w">  </span><span class="k">have</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="bp">&#8800;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kd">by</span>
+<span class="w">    </span><span class="n">intro</span><span class="w"> </span><span class="n">h&#8320;</span>
+<span class="w">    </span><span class="k">have</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="o">(</span><span class="mi">1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#8450;</span><span class="o">)</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kd">by</span><span class="w"> </span><span class="n">polyrith</span>
+<span class="w">    </span><span class="n">norm_num</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="n">this</span>
+<span class="w">  </span><span class="n">field_simp</span>
+<span class="w">  </span><span class="n">rw</span><span class="w"> </span><span class="o">[</span><span class="bp">&#8592;</span><span class="w"> </span><span class="n">sub_ne_zero</span><span class="o">]</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="n">hx&#39;</span>
+<span class="w">  </span><span class="n">apply</span><span class="w"> </span><span class="n">mul_left_cancel&#8320;</span><span class="w"> </span><span class="n">hx&#39;</span>
+<span class="w">  </span><span class="n">polyrith</span>
 </pre></div>
 </div>
 <p>Here is an exercise. Let <span class="math notranslate nohighlight">\(f:\mathbb{R}\to \mathbb{R}\)</span> be the function</p>
@@ -148,27 +158,28 @@ Click through each invocation of <code class="docutils literal notranslate"><spa
 \[f(x)=\frac{1}{1-x}.\]</div>
 <p>Away from the bad inputs <span class="math notranslate nohighlight">\(x=0,1\)</span>, show that the triple composition of this function is the
 identity.</p>
-<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">noncomputable</span> <span class="kd">def</span> <span class="n">f</span> <span class="o">:</span> <span class="n">&#8477;</span> <span class="bp">&#8594;</span> <span class="n">&#8477;</span> <span class="o">:=</span> <span class="bp">&#955;</span> <span class="n">x</span><span class="o">,</span> <span class="o">(</span><span class="mi">1</span> <span class="bp">-</span> <span class="n">x</span><span class="o">)</span><span class="bp">&#8315;&#185;</span>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">noncomputable</span><span class="w"> </span><span class="kd">def</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#8477;</span><span class="w"> </span><span class="bp">&#8594;</span><span class="w"> </span><span class="n">&#8477;</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">fun</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="bp">=&gt;</span><span class="w"> </span><span class="o">(</span><span class="mi">1</span><span class="w"> </span><span class="bp">-</span><span class="w"> </span><span class="n">x</span><span class="o">)</span><span class="bp">&#8315;&#185;</span>
 
-<span class="kd">example</span> <span class="o">{</span><span class="n">x</span> <span class="o">:</span> <span class="n">&#8477;</span><span class="o">}</span> <span class="o">(</span><span class="n">h&#8321;</span> <span class="o">:</span> <span class="n">x</span> <span class="bp">&#8800;</span> <span class="mi">1</span><span class="o">)</span> <span class="o">(</span><span class="n">h&#8320;</span> <span class="o">:</span> <span class="n">x</span> <span class="bp">&#8800;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">:</span> <span class="n">f</span> <span class="o">(</span><span class="n">f</span> <span class="o">(</span><span class="n">f</span> <span class="n">x</span><span class="o">))</span> <span class="bp">=</span> <span class="n">x</span> <span class="o">:=</span>
-<span class="kd">begin</span>
-  <span class="n">dsimp</span> <span class="o">[</span><span class="n">f</span><span class="o">],</span>
-  <span class="gr">sorry</span><span class="o">,</span>
-<span class="kd">end</span>
+<span class="kd">example</span><span class="w"> </span><span class="o">{</span><span class="n">x</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#8477;</span><span class="o">}</span><span class="w"> </span><span class="o">(</span><span class="n">h&#8321;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="bp">&#8800;</span><span class="w"> </span><span class="mi">1</span><span class="o">)</span><span class="w"> </span><span class="o">(</span><span class="n">h&#8320;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="bp">&#8800;</span><span class="w"> </span><span class="mi">0</span><span class="o">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">(</span><span class="n">f</span><span class="w"> </span><span class="o">(</span><span class="n">f</span><span class="w"> </span><span class="n">x</span><span class="o">))</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kd">by</span>
+<span class="w">  </span><span class="n">dsimp</span><span class="w"> </span><span class="o">[</span><span class="n">f</span><span class="o">]</span>
+<span class="w">  </span><span class="gr">sorry</span>
 </pre></div>
 </div>
 </section>
 <section id="stereographic-projection">
-<span id="sphere"></span><h2><span class="section-number">4.2. </span>Stereographic projection<a class="headerlink" href="#stereographic-projection" title="Permalink to this headline">&#61633;</a></h2>
+<span id="sphere"></span><h2><span class="section-number">4.2. </span>Stereographic projection<a class="headerlink" href="#stereographic-projection" title="Link to this heading">&#61633;</a></h2>
 <p>In this section we construct stereographic projection as a bijection between the unit circle (minus
 its north pole) and the real line.  The formulas for both directions of the bijection are
 fractions, so we will use <code class="docutils literal notranslate"><span class="pre">field_simp</span></code> repeatedly.</p>
-<p>We introduce the notation <code class="docutils literal notranslate"><span class="pre">&#120138;</span></code> for the unit circle in <code class="docutils literal notranslate"><span class="pre">&#8477;</span> <span class="pre">&#215;</span> <span class="pre">&#8477;</span></code>, defined as the set of points
+<p>We introduce the notation <code class="docutils literal notranslate"><span class="pre">&#120138;</span></code> for the unit circle in <code class="docutils literal notranslate"><span class="pre">&#8477;</span> <span class="pre">&#215;</span> <span class="pre">&#8477;</span></code>, defined as the subtype of points
 <span class="math notranslate nohighlight">\((x,y)\)</span> such that <span class="math notranslate nohighlight">\(x^2+y^2=1\)</span>.</p>
 <p>The forward direction of the bijection is the map</p>
 <div class="math notranslate nohighlight">
 \[(x,y) \mapsto \frac{2x}{1-y}.\]</div>
-<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">def</span> <span class="n">stereo_to_fun</span> <span class="o">(</span><span class="n">p</span> <span class="o">:</span> <span class="bp">&#120138;</span><span class="o">)</span> <span class="o">:</span> <span class="n">&#8477;</span> <span class="o">:=</span> <span class="mi">2</span> <span class="bp">*</span> <span class="n">p.1.1</span> <span class="bp">/</span> <span class="o">(</span><span class="mi">1</span> <span class="bp">-</span> <span class="n">p.1.2</span><span class="o">)</span>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="sd">/-- Stereographic projection, forward direction. This is a map from `&#8477; &#215; &#8477;` to `&#8477;`. It is</span>
+<span class="sd">smooth away from the horizontal line `v.2 = 1`.  It restricts on the unit circle to the</span>
+<span class="sd">stereographic projection. -/</span>
+<span class="kd">def</span><span class="w"> </span><span class="n">stereoToFun</span><span class="w"> </span><span class="o">(</span><span class="n">p</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#120138;</span><span class="o">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#8477;</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">p.val</span><span class="bp">.</span><span class="mi">1</span><span class="w"> </span><span class="bp">/</span><span class="w"> </span><span class="o">(</span><span class="mi">1</span><span class="w"> </span><span class="bp">-</span><span class="w"> </span><span class="n">p.val</span><span class="bp">.</span><span class="mi">2</span><span class="o">)</span>
 </pre></div>
 </div>
 <p>The backward direction of the bijection is the map</p>
@@ -176,63 +187,65 @@ fractions, so we will use <code class="docutils literal notranslate"><span class
 \[w \mapsto \frac{1}{w^2+4}\left(4w, w ^ 2 - 4\right).\]</div>
 <p>Here we encounter our first proof obligation. We want to prove this is well-defined as a map from
 <span class="math notranslate nohighlight">\(\mathbb{R}\)</span> to the circle, so we must prove that the norm-square of this expression is 1.
-Fill in the proof below, using <code class="docutils literal notranslate"><span class="pre">field_simp</span></code> and a justification that the denominator is nonzero.</p>
-<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">def</span> <span class="n">stereo_inv_fun</span> <span class="o">(</span><span class="n">w</span> <span class="o">:</span> <span class="n">&#8477;</span><span class="o">)</span> <span class="o">:</span> <span class="bp">&#120138;</span> <span class="o">:=</span>
-<span class="o">&#10216;(</span><span class="n">w</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">+</span> <span class="mi">4</span><span class="o">)</span><span class="bp">&#8315;&#185;</span> <span class="bp">&#8226;</span> <span class="o">(</span><span class="mi">4</span> <span class="bp">*</span> <span class="n">w</span><span class="o">,</span> <span class="n">w</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">-</span> <span class="mi">4</span><span class="o">),</span>
-  <span class="kd">begin</span>
-    <span class="n">dsimp</span><span class="o">,</span>
-    <span class="gr">sorry</span><span class="o">,</span>
-  <span class="kd">end</span><span class="o">&#10217;</span>
+Fill in the proof below, using <code class="docutils literal notranslate"><span class="pre">field_simp</span></code>.
+In this case there is no need to justify that the denominator, <span class="math notranslate nohighlight">\(w^2+4\)</span>, is nonzero:
+it is clearly strictly positive, so <code class="docutils literal notranslate"><span class="pre">field_simp</span></code> finds the nonzeroness automatically.</p>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="sd">/-- Stereographic projection, reverse direction.  This is a map from `&#8477;` to the unit circle</span>
+<span class="sd">`&#120138;` in `&#8477; &#215; &#8477;`. -/</span>
+<span class="kd">def</span><span class="w"> </span><span class="n">stereoInvFun</span><span class="w"> </span><span class="o">(</span><span class="n">w</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#8477;</span><span class="o">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#120138;</span><span class="w"> </span><span class="n">where</span>
+<span class="w">  </span><span class="n">val</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">(</span><span class="n">w</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="mi">4</span><span class="o">)</span><span class="bp">&#8315;&#185;</span><span class="w"> </span><span class="bp">&#8226;</span><span class="w"> </span><span class="o">(</span><span class="mi">4</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">w</span><span class="o">,</span><span class="w"> </span><span class="n">w</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">-</span><span class="w"> </span><span class="mi">4</span><span class="o">)</span>
+<span class="w">  </span><span class="n">property</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kd">by</span>
+<span class="w">    </span><span class="n">dsimp</span>
+<span class="w">    </span><span class="gr">sorry</span>
 </pre></div>
 </div>
 <p>And in fact, since the bijection is going to be a map from <span class="math notranslate nohighlight">\(\mathbb{R}\)</span> to the circle
 <em>minus the north pole</em>, we must also prove that this expression is not equal to <span class="math notranslate nohighlight">\((0,1)\)</span>.
-Fill in the proof below, using <code class="docutils literal notranslate"><span class="pre">field_simp</span></code> and a justification that the denominator is nonzero
-to simplify the expression <code class="docutils literal notranslate"><span class="pre">h</span></code>.  Then find a contradiction.</p>
-<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">lemma</span> <span class="n">stereo_inv_fun_ne_north_pole</span> <span class="o">(</span><span class="n">w</span> <span class="o">:</span> <span class="n">&#8477;</span><span class="o">)</span> <span class="o">:</span>
-  <span class="n">stereo_inv_fun</span> <span class="n">w</span> <span class="bp">&#8800;</span> <span class="o">(&#10216;(</span><span class="mi">0</span><span class="o">,</span> <span class="mi">1</span><span class="o">),</span> <span class="kd">by</span> <span class="n">simp</span><span class="o">&#10217;</span> <span class="o">:</span> <span class="bp">&#120138;</span><span class="o">)</span> <span class="o">:=</span>
-<span class="kd">begin</span>
-  <span class="n">refine</span> <span class="n">subtype.ne_of_val_ne</span> <span class="n">_</span><span class="o">,</span>
-  <span class="n">dsimp</span><span class="o">,</span>
-  <span class="n">rw</span> <span class="o">[</span><span class="n">prod.mk.inj_iff</span><span class="o">],</span>
-  <span class="n">intros</span> <span class="n">h</span><span class="o">,</span>
-  <span class="gr">sorry</span><span class="o">,</span>
-<span class="kd">end</span>
+Fill in the proof below, using <code class="docutils literal notranslate"><span class="pre">field_simp</span></code> to simplify the expressions <code class="docutils literal notranslate"><span class="pre">h&#8321;</span></code> and <code class="docutils literal notranslate"><span class="pre">h&#8322;</span></code>.
+Then find a contradiction.</p>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">theorem</span><span class="w"> </span><span class="n">stereoInvFun_ne_north_pole</span><span class="w"> </span><span class="o">(</span><span class="n">w</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#8477;</span><span class="o">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">stereoInvFun</span><span class="w"> </span><span class="n">w</span><span class="w"> </span><span class="bp">&#8800;</span><span class="w"> </span><span class="o">(&#10216;(</span><span class="mi">0</span><span class="o">,</span><span class="w"> </span><span class="mi">1</span><span class="o">),</span><span class="w"> </span><span class="kd">by</span><span class="w"> </span><span class="n">simp</span><span class="o">&#10217;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#120138;</span><span class="o">)</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kd">by</span>
+<span class="w">  </span><span class="n">refine</span><span class="w"> </span><span class="n">Subtype.coe_ne_coe</span><span class="bp">.</span><span class="mi">1</span><span class="w"> </span><span class="bp">?</span><span class="n">_</span>
+<span class="w">  </span><span class="n">dsimp</span>
+<span class="w">  </span><span class="n">rw</span><span class="w"> </span><span class="o">[</span><span class="n">Prod.mk.inj_iff</span><span class="o">]</span>
+<span class="w">  </span><span class="n">rintro</span><span class="w"> </span><span class="o">&#10216;</span><span class="n">h&#8321;</span><span class="o">,</span><span class="w"> </span><span class="n">h&#8322;</span><span class="o">&#10217;</span>
+<span class="w">  </span><span class="gr">sorry</span>
 </pre></div>
 </div>
-<p>Now comes the hardest part, proving that the given expression is a left inverse for the forward
-direction.  The denominators that appear are complicated, and you may have quite a bit of work in
-proving them nonzero.</p>
-<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">lemma</span> <span class="n">stereo_left_inv</span> <span class="o">{</span><span class="n">p</span> <span class="o">:</span> <span class="bp">&#120138;</span><span class="o">}</span> <span class="o">(</span><span class="n">hp</span> <span class="o">:</span> <span class="o">(</span><span class="n">p</span> <span class="o">:</span> <span class="n">&#8477;</span> <span class="bp">&#215;</span> <span class="n">&#8477;</span><span class="o">)</span> <span class="bp">&#8800;</span> <span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="mi">1</span><span class="o">))</span> <span class="o">:</span>
-  <span class="n">stereo_inv_fun</span> <span class="o">(</span><span class="n">stereo_to_fun</span> <span class="n">p</span><span class="o">)</span> <span class="bp">=</span> <span class="n">p</span> <span class="o">:=</span>
-<span class="kd">begin</span>
-  <span class="n">ext1</span><span class="o">,</span>
-  <span class="n">obtain</span> <span class="o">&#10216;&#10216;</span><span class="n">x</span><span class="o">,</span> <span class="n">y</span><span class="o">&#10217;,</span> <span class="n">pythag</span><span class="o">&#10217;</span> <span class="o">:=</span> <span class="n">p</span><span class="o">,</span>
-  <span class="n">dsimp</span> <span class="n">at</span> <span class="n">pythag</span> <span class="n">hp</span> <span class="bp">&#8866;</span><span class="o">,</span>
-  <span class="n">rw</span> <span class="n">prod.mk.inj_iff</span> <span class="n">at</span> <span class="n">hp</span> <span class="bp">&#8866;</span><span class="o">,</span>
-  <span class="gr">sorry</span><span class="o">,</span>
-<span class="kd">end</span>
+<p>Now comes the hardest part, proving that the given expression is a left inverse for the forward direction.
+There are two different denominator expressions which appear:
+<span class="math notranslate nohighlight">\(1-y\)</span> and <span class="math notranslate nohighlight">\(\left(\frac{2x}{1 - y}\right) ^ 2 + 4\)</span>.
+You will need to prove the nonzeroness of the first one explicitly.
+For the second, the nonzeroness will be proved automatically by <code class="docutils literal notranslate"><span class="pre">field_simp</span></code>,
+since it is clearly strictly positive.</p>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">theorem</span><span class="w"> </span><span class="n">stereo_left_inv</span><span class="w"> </span><span class="o">{</span><span class="n">p</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#120138;</span><span class="o">}</span><span class="w"> </span><span class="o">(</span><span class="n">hp</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="o">(</span><span class="n">p</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#8477;</span><span class="w"> </span><span class="bp">&#215;</span><span class="w"> </span><span class="n">&#8477;</span><span class="o">)</span><span class="w"> </span><span class="bp">&#8800;</span><span class="w"> </span><span class="o">(</span><span class="mi">0</span><span class="o">,</span><span class="w"> </span><span class="mi">1</span><span class="o">))</span><span class="w"> </span><span class="o">:</span>
+<span class="w">    </span><span class="n">stereoInvFun</span><span class="w"> </span><span class="o">(</span><span class="n">stereoToFun</span><span class="w"> </span><span class="n">p</span><span class="o">)</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kd">by</span>
+<span class="w">  </span><span class="n">ext1</span>
+<span class="w">  </span><span class="n">obtain</span><span class="w"> </span><span class="o">&#10216;&#10216;</span><span class="n">x</span><span class="o">,</span><span class="w"> </span><span class="n">y</span><span class="o">&#10217;,</span><span class="w"> </span><span class="n">pythag</span><span class="o">&#10217;</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">p</span>
+<span class="w">  </span><span class="n">dsimp</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="n">pythag</span><span class="w"> </span><span class="n">hp</span><span class="w"> </span><span class="bp">&#8866;</span>
+<span class="w">  </span><span class="n">rw</span><span class="w"> </span><span class="o">[</span><span class="n">Prod.mk.inj_iff</span><span class="o">]</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="n">hp</span><span class="w"> </span><span class="bp">&#8866;</span>
+<span class="w">  </span><span class="gr">sorry</span>
 </pre></div>
 </div>
-<p>The right inverse proof is much easier, only one denominator and we&#8217;ve seen it before.</p>
-<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">lemma</span> <span class="n">stereo_right_inv</span> <span class="o">(</span><span class="n">w</span> <span class="o">:</span> <span class="n">&#8477;</span><span class="o">)</span> <span class="o">:</span> <span class="n">stereo_to_fun</span> <span class="o">(</span><span class="n">stereo_inv_fun</span> <span class="n">w</span><span class="o">)</span> <span class="bp">=</span> <span class="n">w</span> <span class="o">:=</span>
-<span class="kd">begin</span>
-  <span class="n">dsimp</span><span class="o">,</span>
-  <span class="gr">sorry</span><span class="o">,</span>
-<span class="kd">end</span>
+<p>The right inverse proof is much easier,
+it&#8217;s another case where <code class="docutils literal notranslate"><span class="pre">field_simp</span></code> can check the denominator-nonzeroness silently.</p>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">theorem</span><span class="w"> </span><span class="n">stereo_right_inv</span><span class="w"> </span><span class="o">(</span><span class="n">w</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#8477;</span><span class="o">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">stereoToFun</span><span class="w"> </span><span class="o">(</span><span class="n">stereoInvFun</span><span class="w"> </span><span class="n">w</span><span class="o">)</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="n">w</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kd">by</span>
+<span class="w">  </span><span class="n">dsimp</span>
+<span class="w">  </span><span class="gr">sorry</span>
 </pre></div>
 </div>
 <p>Putting all these facts together with a bit of Lean abstract nonsense gives the bijection.</p>
-<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">def</span> <span class="n">stereographic_projection</span> <span class="o">:</span> <span class="o">({(&#10216;(</span><span class="mi">0</span><span class="o">,</span> <span class="mi">1</span><span class="o">),</span> <span class="kd">by</span> <span class="n">simp</span><span class="o">&#10217;</span> <span class="o">:</span> <span class="bp">&#120138;</span><span class="o">)}</span><span class="bp">&#7580;</span> <span class="o">:</span> <span class="n">set</span> <span class="bp">&#120138;</span><span class="o">)</span> <span class="bp">&#8771;</span> <span class="n">&#8477;</span> <span class="o">:=</span>
-<span class="o">{</span> <span class="n">to_fun</span> <span class="o">:=</span> <span class="n">stereo_to_fun</span> <span class="bp">&#8728;</span> <span class="n">coe</span><span class="o">,</span>
-  <span class="n">inv_fun</span> <span class="o">:=</span> <span class="bp">&#955;</span> <span class="n">w</span><span class="o">,</span> <span class="o">&#10216;</span><span class="n">stereo_inv_fun</span> <span class="n">w</span><span class="o">,</span> <span class="n">stereo_inv_fun_ne_north_pole</span> <span class="n">w</span><span class="o">&#10217;,</span>
-  <span class="n">left_inv</span> <span class="o">:=</span> <span class="bp">&#955;</span> <span class="n">p</span><span class="o">,</span> <span class="n">subtype.coe_injective</span> <span class="bp">$</span> <span class="n">stereo_left_inv</span> <span class="o">(</span><span class="n">subtype.coe_injective.ne</span> <span class="n">p.prop</span><span class="o">),</span>
-  <span class="n">right_inv</span> <span class="o">:=</span> <span class="bp">&#955;</span> <span class="n">w</span><span class="o">,</span> <span class="n">stereo_right_inv</span> <span class="n">w</span> <span class="o">}</span>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="sd">/-- Stereographic projection, as a bijection to `&#8477;` from the complement of `(0, 1)` in the</span>
+<span class="sd">unit circle `&#120138;` in `&#8477; &#215; &#8477;`. -/</span>
+<span class="kd">def</span><span class="w"> </span><span class="n">stereographicProjection</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="o">({(&#10216;(</span><span class="mi">0</span><span class="o">,</span><span class="w"> </span><span class="mi">1</span><span class="o">),</span><span class="w"> </span><span class="kd">by</span><span class="w"> </span><span class="n">simp</span><span class="o">&#10217;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#120138;</span><span class="o">)}</span><span class="bp">&#7580;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Set</span><span class="w"> </span><span class="n">&#120138;</span><span class="o">)</span><span class="w"> </span><span class="bp">&#8771;</span><span class="w"> </span><span class="n">&#8477;</span><span class="w"> </span><span class="n">where</span>
+<span class="w">  </span><span class="n">toFun</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">stereoToFun</span><span class="w"> </span><span class="bp">&#8728;</span><span class="w"> </span><span class="o">(</span><span class="bp">&#183;</span><span class="o">)</span>
+<span class="w">  </span><span class="n">invFun</span><span class="w"> </span><span class="n">w</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&#10216;</span><span class="n">stereoInvFun</span><span class="w"> </span><span class="n">w</span><span class="o">,</span><span class="w"> </span><span class="n">stereoInvFun_ne_north_pole</span><span class="w"> </span><span class="n">w</span><span class="o">&#10217;</span>
+<span class="w">  </span><span class="n">left_inv</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">Subtype.coe_injective</span><span class="w"> </span><span class="bp">&lt;|</span><span class="w"> </span><span class="n">stereo_left_inv</span><span class="w"> </span><span class="o">(</span><span class="n">Subtype.coe_injective.ne</span><span class="w"> </span><span class="n">p.prop</span><span class="o">)</span>
+<span class="w">  </span><span class="n">right_inv</span><span class="w"> </span><span class="n">w</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">stereo_right_inv</span><span class="w"> </span><span class="n">w</span>
 </pre></div>
 </div>
 </section>
 <section id="a-binomial-coefficient-identity">
-<span id="catalan"></span><h2><span class="section-number">4.3. </span>A binomial coefficient identity<a class="headerlink" href="#a-binomial-coefficient-identity" title="Permalink to this headline">&#61633;</a></h2>
+<span id="catalan"></span><h2><span class="section-number">4.3. </span>A binomial coefficient identity<a class="headerlink" href="#a-binomial-coefficient-identity" title="Link to this heading">&#61633;</a></h2>
 <p>In this section we prove the following identity involving binomial coefficients:</p>
 <div class="admonition-proposition admonition">
 <p class="admonition-title">Proposition</p>
@@ -245,17 +258,18 @@ proving them nonzero.</p>
 \frac{ 1}{(i + 1)(j + 1)} { 2i \choose i}{ 2j \choose j}.\end{split}\]</div>
 </div>
 <p>This identity can be discovered by applying the &#8220;Gosper algorithm&#8221; to the right-hand side.  It
-turns up in mathlib in the
-<a class="reference external" href="https://leanprover-community.github.io/mathlib_docs/find/catalan_eq_central_binom_div/src">proof</a>
+turns up in Mathlib in the
+<a class="reference external" href="https://leanprover-community.github.io/mathlib4_docs/Mathlib/Combinatorics/Enumerative/Catalan.html#catalan_eq_centralBinom_div">proof</a>
 that the recursive definition of the Catalan numbers  agrees with the definition by binomial
 coefficients.</p>
-<p>The &#8220;central binomial coefficient&#8221; expressions <span class="math notranslate nohighlight">\({2n \choose n}\)</span> are available in mathlib
+<p>The &#8220;central binomial coefficient&#8221; expressions <span class="math notranslate nohighlight">\({2n \choose n}\)</span> are available in Mathlib
 under the name</p>
-<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="k">#check</span> <span class="n">nat.central_binom</span> <span class="c1">-- nat.central_binom : &#8469; &#8594; &#8469;</span>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="k">#check</span><span class="w"> </span><span class="bp">@</span><span class="n">Nat.centralBinom</span>
+<span class="c1">-- Nat.centralBinom : &#8469; &#8594; &#8469;</span>
 </pre></div>
 </div>
 <p>and the following easy identity, relating successive central binomial coefficients, is available
-in mathlib under the name <code class="docutils literal notranslate"><span class="pre">nat.succ_mul_central_binom_succ</span></code>.</p>
+in Mathlib under the name <code class="docutils literal notranslate"><span class="pre">Nat.succ_mul_centralBinom_succ</span></code>.</p>
 <div class="admonition-lemma admonition">
 <p class="admonition-title">Lemma</p>
 <p>For all natural numbers <span class="math notranslate nohighlight">\(n\)</span>,</p>
@@ -266,35 +280,22 @@ in mathlib under the name <code class="docutils literal notranslate"><span class
 all <span class="math notranslate nohighlight">\({2(i+1)\choose i+1}\)</span>  into <span class="math notranslate nohighlight">\({2i\choose i}\)</span> and once to turn all
 <span class="math notranslate nohighlight">\({2(j+1)\choose j+1}\)</span> into <span class="math notranslate nohighlight">\({2j\choose j}\)</span>.  We should therefore first state these two
 applications of the lemma, then use <code class="docutils literal notranslate"><span class="pre">field_simp</span></code> to clear denominators and then <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> to
-figure out the coefficients with which to combine them.  <code class="docutils literal notranslate"><span class="pre">field_simp</span></code> will require proofs that
-all the denominators we want to clear are nonzero, but this is easy since they are all of the form
-&#8220;natural number plus one&#8221;:</p>
-<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="k">#check</span> <span class="n">nat.succ_ne_zero</span> <span class="c1">-- nat.succ_ne_zero : &#8704; (n : &#8469;), n.succ &#8800; 0</span>
-</pre></div>
-</div>
-<p>There is one main complication.  The lemmas <code class="docutils literal notranslate"><span class="pre">nat.succ_mul_central_binom_succ</span></code> and
-<code class="docutils literal notranslate"><span class="pre">nat.succ_ne_zero</span></code> concern natural numbers, whereas our goal (which involves divisions) is stated
+figure out the coefficients with which to combine them.  <code class="docutils literal notranslate"><span class="pre">field_simp</span></code> will check along the way
+that all the denominators we want to clear are nonzero (since they are all of the form
+&#8220;natural number plus one&#8221;).</p>
+<p>There is one main complication.  The lemma <code class="docutils literal notranslate"><span class="pre">Nat.succ_mul_centralBinom_succ</span></code> concerns natural numbers,
+whereas our goal (which involves divisions) is stated
 as an equality of rational numbers.  So each of the applications of the above lemmas will need to
-be cast &#8211; try using the tactic <code class="docutils literal notranslate"><span class="pre">exact_mod_cast</span></code> for this.</p>
-<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">example</span> <span class="o">{</span><span class="n">i</span> <span class="n">j</span> <span class="o">:</span> <span class="n">&#8469;</span><span class="o">}</span> <span class="o">:</span>
-  <span class="o">((</span><span class="n">i</span> <span class="bp">+</span> <span class="mi">1</span><span class="o">)</span><span class="bp">.</span><span class="n">central_binom</span><span class="o">:</span><span class="n">&#8474;</span><span class="o">)</span> <span class="bp">*</span> <span class="n">j.central_binom</span> <span class="bp">*</span> <span class="o">(</span><span class="n">i</span> <span class="bp">-</span> <span class="n">j</span> <span class="bp">+</span> <span class="mi">1</span><span class="o">)</span> <span class="bp">/</span> <span class="o">(</span><span class="mi">2</span> <span class="bp">*</span> <span class="o">(</span><span class="n">i</span> <span class="bp">+</span> <span class="n">j</span> <span class="bp">+</span> <span class="mi">1</span><span class="o">)</span> <span class="bp">*</span> <span class="o">(</span><span class="n">i</span> <span class="bp">+</span> <span class="n">j</span> <span class="bp">+</span> <span class="mi">2</span><span class="o">))</span>
-  <span class="bp">-</span>  <span class="n">i.central_binom</span> <span class="bp">*</span> <span class="o">(</span><span class="n">j</span> <span class="bp">+</span> <span class="mi">1</span><span class="o">)</span><span class="bp">.</span><span class="n">central_binom</span> <span class="bp">*</span> <span class="o">(</span><span class="n">i</span> <span class="bp">-</span> <span class="n">j</span> <span class="bp">-</span> <span class="mi">1</span><span class="o">)</span> <span class="bp">/</span> <span class="o">(</span><span class="mi">2</span> <span class="bp">*</span> <span class="o">(</span><span class="n">i</span> <span class="bp">+</span> <span class="n">j</span> <span class="bp">+</span> <span class="mi">1</span><span class="o">)</span> <span class="bp">*</span> <span class="o">(</span><span class="n">i</span> <span class="bp">+</span> <span class="n">j</span> <span class="bp">+</span> <span class="mi">2</span><span class="o">))</span>
-  <span class="bp">=</span> <span class="n">i.central_binom</span> <span class="bp">/</span> <span class="o">(</span><span class="n">i</span> <span class="bp">+</span> <span class="mi">1</span><span class="o">)</span> <span class="bp">*</span> <span class="o">(</span><span class="n">j.central_binom</span> <span class="bp">/</span> <span class="o">(</span><span class="n">j</span> <span class="bp">+</span> <span class="mi">1</span><span class="o">))</span> <span class="o">:=</span>
-<span class="kd">begin</span>
-  <span class="k">have</span> <span class="n">h&#8321;</span> <span class="o">:</span> <span class="o">((</span><span class="n">i</span><span class="o">:</span><span class="n">&#8474;</span><span class="o">)</span> <span class="bp">+</span> <span class="mi">1</span><span class="o">)</span> <span class="bp">*</span> <span class="o">(</span><span class="n">i</span> <span class="bp">+</span> <span class="mi">1</span><span class="o">)</span><span class="bp">.</span><span class="n">central_binom</span> <span class="bp">=</span> <span class="mi">2</span> <span class="bp">*</span> <span class="o">(</span><span class="mi">2</span> <span class="bp">*</span> <span class="n">i</span> <span class="bp">+</span> <span class="mi">1</span><span class="o">)</span> <span class="bp">*</span> <span class="n">i.central_binom</span><span class="o">,</span>
-  <span class="o">{</span> <span class="gr">sorry</span> <span class="o">},</span>
-  <span class="k">have</span> <span class="n">h&#8322;</span> <span class="o">:</span> <span class="o">((</span><span class="n">j</span><span class="o">:</span><span class="n">&#8474;</span><span class="o">)</span> <span class="bp">+</span> <span class="mi">1</span><span class="o">)</span> <span class="bp">*</span> <span class="o">(</span><span class="n">j</span> <span class="bp">+</span> <span class="mi">1</span><span class="o">)</span><span class="bp">.</span><span class="n">central_binom</span> <span class="bp">=</span> <span class="mi">2</span> <span class="bp">*</span> <span class="o">(</span><span class="mi">2</span> <span class="bp">*</span> <span class="n">j</span> <span class="bp">+</span> <span class="mi">1</span><span class="o">)</span> <span class="bp">*</span> <span class="n">j.central_binom</span><span class="o">,</span>
-  <span class="o">{</span> <span class="gr">sorry</span> <span class="o">},</span>
-  <span class="k">have</span> <span class="o">:</span> <span class="o">(</span><span class="n">i</span><span class="o">:</span><span class="n">&#8474;</span><span class="o">)</span> <span class="bp">+</span> <span class="n">j</span> <span class="bp">+</span> <span class="mi">1</span> <span class="bp">&#8800;</span> <span class="mi">0</span><span class="o">,</span>
-  <span class="o">{</span> <span class="gr">sorry</span> <span class="o">},</span>
-  <span class="k">have</span> <span class="o">:</span> <span class="o">(</span><span class="n">i</span><span class="o">:</span><span class="n">&#8474;</span><span class="o">)</span> <span class="bp">+</span> <span class="n">j</span> <span class="bp">+</span> <span class="mi">2</span> <span class="bp">&#8800;</span> <span class="mi">0</span><span class="o">,</span>
-  <span class="o">{</span> <span class="gr">sorry</span> <span class="o">},</span>
-  <span class="k">have</span> <span class="o">:</span> <span class="o">(</span><span class="n">i</span><span class="o">:</span><span class="n">&#8474;</span><span class="o">)</span> <span class="bp">+</span> <span class="mi">1</span> <span class="bp">&#8800;</span> <span class="mi">0</span><span class="o">,</span>
-  <span class="o">{</span> <span class="gr">sorry</span> <span class="o">},</span>
-  <span class="k">have</span> <span class="o">:</span> <span class="o">(</span><span class="n">j</span><span class="o">:</span><span class="n">&#8474;</span><span class="o">)</span> <span class="bp">+</span> <span class="mi">1</span> <span class="bp">&#8800;</span> <span class="mi">0</span><span class="o">,</span>
-  <span class="o">{</span> <span class="gr">sorry</span> <span class="o">},</span>
-  <span class="gr">sorry</span><span class="o">,</span>
-<span class="kd">end</span>
+be cast &#8211; try using the tactic <code class="docutils literal notranslate"><span class="pre">qify</span></code> for this.</p>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">example</span><span class="w"> </span><span class="o">{</span><span class="n">i</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#8469;</span><span class="o">}</span><span class="w"> </span><span class="o">:</span>
+<span class="w">    </span><span class="o">((</span><span class="n">i</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="mi">1</span><span class="o">)</span><span class="bp">.</span><span class="n">centralBinom</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#8474;</span><span class="o">)</span>
+<span class="w">      </span><span class="bp">*</span><span class="w"> </span><span class="n">j.centralBinom</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="o">(</span><span class="n">i</span><span class="w"> </span><span class="bp">-</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="mi">1</span><span class="o">)</span><span class="w"> </span><span class="bp">/</span><span class="w"> </span><span class="o">(</span><span class="mi">2</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="o">(</span><span class="n">i</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="mi">1</span><span class="o">)</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="o">(</span><span class="n">i</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="mi">2</span><span class="o">))</span>
+<span class="w">    </span><span class="bp">-</span><span class="w"> </span><span class="n">i.centralBinom</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="o">(</span><span class="n">j</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="mi">1</span><span class="o">)</span><span class="bp">.</span><span class="n">centralBinom</span>
+<span class="w">      </span><span class="bp">*</span><span class="w"> </span><span class="o">(</span><span class="n">i</span><span class="w"> </span><span class="bp">-</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="bp">-</span><span class="w"> </span><span class="mi">1</span><span class="o">)</span><span class="w"> </span><span class="bp">/</span><span class="w"> </span><span class="o">(</span><span class="mi">2</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="o">(</span><span class="n">i</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="mi">1</span><span class="o">)</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="o">(</span><span class="n">i</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="mi">2</span><span class="o">))</span>
+<span class="w">    </span><span class="bp">=</span><span class="w"> </span><span class="n">i.centralBinom</span><span class="w"> </span><span class="bp">/</span><span class="w"> </span><span class="o">(</span><span class="n">i</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="mi">1</span><span class="o">)</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="o">(</span><span class="n">j.centralBinom</span><span class="w"> </span><span class="bp">/</span><span class="w"> </span><span class="o">(</span><span class="n">j</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="mi">1</span><span class="o">))</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kd">by</span>
+<span class="w">  </span><span class="k">have</span><span class="w"> </span><span class="n">h&#8321;</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">i.succ_mul_centralBinom_succ</span>
+<span class="w">  </span><span class="k">have</span><span class="w"> </span><span class="n">h&#8322;</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">j.succ_mul_centralBinom_succ</span>
+<span class="w">  </span><span class="gr">sorry</span>
 </pre></div>
 </div>
 </section>
@@ -310,7 +311,7 @@ be cast &#8211; try using the tactic <code class="docutils literal notranslate">
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Heather Macbeth.</p>
+    <p>&#169; Copyright 2022-2024, Heather Macbeth.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

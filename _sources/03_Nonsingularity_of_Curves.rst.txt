@@ -3,5 +3,5 @@
 Nonsingularity of algebraic curves
 ==================================
 
-.. include:: 03_Nonsingularity_of_Curves/01_powers_case_splits.inc
-.. include:: 03_Nonsingularity_of_Curves/02_projective_curves.inc
+.. include:: 03_Nonsingularity_of_Curves/01PowersCaseSplits.inc
+.. include:: 03_Nonsingularity_of_Curves/02ProjectiveCurves.inc
