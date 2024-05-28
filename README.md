@@ -6,4 +6,4 @@ If you have a GitHub account, you can run the code on the web using Gitpod.
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/hrmacbeth/computations_in_lean)
 
-You can also clone the repository to your computer by typing `leanproject get https://github.com/hrmacbeth/computations_in_lean` at the command line.  This will let you run the code on your computer.
+You can also clone the repository to your computer by typing `git clone https://github.com/hrmacbeth/computations_in_lean.git` at the command line.  This will let you run the code on your computer.

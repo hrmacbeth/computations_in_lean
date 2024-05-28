@@ -4,17 +4,18 @@ Algebraic computations in Lean
 ==============================
 
 This is a tutorial on doing proofs with a computational flavour using the 
-`mathlib <https://github.com/leanprover-community/mathlib>`_ library for the
-`Lean 3 <https://leanprover.github.io/>`_ proof assistant.
+`Mathlib <https://github.com/leanprover-community/mathlib4>`_ library for the
+`Lean <https://leanprover.github.io/>`_ proof assistant.
 
 The phrase "computational flavour" might need some explanation. These are not heavy computations
 that require two hours running Mathematica, but simply the kind of mildly-painful calculation that
 might take a couple of paragraphs on paper.
 
-Currently the tutorial focuses on the brand new tactic ``polyrith`` and on ``field_simp``.  There
-are several other powerful tactics which are commonly needed for "computational" proofs, notably
-``norm_num``, ``norm_cast`` (and variants), and ``(n)linarith``. These other tactics are discussed
-in context as the need arises, but this tutorial might eventually be extended to cover them too.
+The tutorial focuses on the Gröbner basis tactic ``polyrith``
+and on the division-cancelling tactic ``field_simp``.
+There are several other powerful tactics which are commonly needed for "computational" proofs,
+notably ``norm_num``, ``norm_cast`` (and variants), ``(n)linarith`` and ``gcongr``.
+These other tactics are discussed in context as the need arises.
 
 This is an intermediate-level tutorial, requiring familiarity with the syntax of Lean as covered in
 approximately the first two chapters of `Mathematics in Lean
@@ -22,8 +23,14 @@ approximately the first two chapters of `Mathematics in Lean
 presentation is on the computations, so don't worry about understanding every detail of the syntax
 if you can pick up the general idea.
 
-This tutorial is new (July 2022) and feedback is very welcome. If you try this tutorial, come to
-the Lean chat room on `Zulip <https://leanprover.zulipchat.com/>`_ and say hello!
+This tutorial was originally written in Lean 3 in July 2022 when ``polyrith`` first appeared.
+A video of a talk at `ICERM <https://icerm.brown.edu/>`_ following that version of the tutorial
+is available in `ICERM's video database <https://icerm.brown.edu/video_archive/?play=2896>`_. 
+The update to Lean 4 was posted in May 2024.
+
+Feedback is very welcome.
+Email me (`Heather Macbeth <https://faculty.fordham.edu/hmacbeth1/>`_),
+or come to the Lean chat room on `Zulip <https://leanprover.zulipchat.com/>`_ and say hello!
 
 .. toctree::
    :numbered:
@@ -34,7 +41,8 @@ the Lean chat room on `Zulip <https://leanprover.zulipchat.com/>`_ and say hello
    03_Nonsingularity_of_Curves
    04_Combining_Tactics
 
-**Acknowledgements:** I have raided the mathlib contributions of a number of people for examples in
+**Acknowledgements:** I have raided the Mathlib contributions of a number of people for examples in
 this tutorial.  Thank you to Johan Commelin, Julian Külshammer and François 
-Sunatori! And particular thanks to Jeremy Avigad, for sharing the Sphinx template for the tutorial,
+Sunatori! And particular thanks to Jeremy Avigad, for sharing the Sphinx template for the tutorial;
+Marc Masdeu and Patrick Massot, for work on the bump to Lean 4;
 and Rob Lewis, for many conversations about automation in Lean.

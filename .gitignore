@@ -1,4 +1,5 @@
 /.vscode
 *.olean
 /_target
+/.lake/
 /leanpkg.path

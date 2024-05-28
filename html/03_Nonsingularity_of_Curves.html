@@ -1,22 +1,25 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>3. Nonsingularity of algebraic curves &mdash; Algebraic computations in Lean 0.1 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=76e47137" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=0731ccc3" />
+
+  
     <link rel="shortcut icon" href="_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=2709fde1"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -30,11 +33,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> Algebraic computations in Lean
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Algebraic computations in Lean
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -44,7 +51,7 @@
 <li class="toctree-l1"><a class="reference internal" href="01_Basics_of_Polyrith.html">1. Basics of polyrith</a></li>
 <li class="toctree-l1"><a class="reference internal" href="02_Using_Polyrith.html">2. Using polyrith</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">3. Nonsingularity of algebraic curves</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#powers-and-case-splits">3.1. Powers and case splits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#powers-and-cancellation">3.1. Powers and cancellation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#klein-quartic">3.2. Klein quartic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#weierstrass-form-elliptic-curve">3.3. Weierstrass-form elliptic curve</a></li>
 </ul>
@@ -65,8 +72,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li><span class="section-number">3. </span>Nonsingularity of algebraic curves</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">3. </span>Nonsingularity of algebraic curves</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/03_Nonsingularity_of_Curves.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -77,60 +84,92 @@
            <div itemprop="articleBody">
              
   <section id="nonsingularity-of-algebraic-curves">
-<span id="projective-curves"></span><h1><span class="section-number">3. </span>Nonsingularity of algebraic curves<a class="headerlink" href="#nonsingularity-of-algebraic-curves" title="Permalink to this headline">&#61633;</a></h1>
-<section id="powers-and-case-splits">
-<span id="powers-case-splits"></span><h2><span class="section-number">3.1. </span>Powers and case splits<a class="headerlink" href="#powers-and-case-splits" title="Permalink to this headline">&#61633;</a></h2>
-<p>This section gives some extended examples &#8220;driving&#8221; <code class="docutils literal notranslate"><span class="pre">polyrith</span></code>.  There are two basic problems
-requiring human workarounds that we will discuss.</p>
-<p>The first problem arises when the ideal generated by the hypothesis polynomials is not
+<span id="projective-curves"></span><h1><span class="section-number">3. </span>Nonsingularity of algebraic curves<a class="headerlink" href="#nonsingularity-of-algebraic-curves" title="Link to this heading">&#61633;</a></h1>
+<section id="powers-and-cancellation">
+<span id="powers-case-splits"></span><h2><span class="section-number">3.1. </span>Powers and cancellation<a class="headerlink" href="#powers-and-cancellation" title="Link to this heading">&#61633;</a></h2>
+<p>In this section we study some problems from algebraic geometry:
+proving the nonsingularity of certain algebraic curves.
+These are good case studies for working with <code class="docutils literal notranslate"><span class="pre">polyrith</span></code>
+in which one needs slightly more than the basic Gr&#246;bner basis algorithm.</p>
+<p>Before starting on the case studies,
+let me demonstrate the two techniques I will use in them to get a bit more out of <code class="docutils literal notranslate"><span class="pre">polyrith</span></code>,
+one built-in and one requiring a human work-around.</p>
+<p>The first technique is relevant when the ideal generated by the hypothesis polynomials is not
 <a class="reference external" href="https://en.wikipedia.org/wiki/Radical_of_an_ideal">radical</a>.
 In the following example, <span class="math notranslate nohighlight">\(x-2\)</span> (the goal polynomial) does not belong to the ideal
-generated by <span class="math notranslate nohighlight">\(x ^ 2 - 4 x + 4=(x-2)^2\)</span>, but only to its radical.  Unsurprisingly,
-<code class="docutils literal notranslate"><span class="pre">polyrith</span></code> fails.</p>
-<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">example</span> <span class="o">{</span><span class="n">x</span> <span class="o">:</span> <span class="n">&#8474;</span><span class="o">}</span> <span class="o">(</span><span class="n">hx</span> <span class="o">:</span> <span class="n">x</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">-</span> <span class="mi">4</span> <span class="bp">*</span> <span class="n">x</span> <span class="bp">=</span> <span class="bp">-</span> <span class="mi">4</span><span class="o">)</span> <span class="o">:</span> <span class="n">x</span> <span class="bp">=</span> <span class="mi">2</span> <span class="o">:=</span>
-<span class="kd">by</span> <span class="n">polyrith</span>
-<span class="c1">-- polyrith failed to retrieve a solution from Sage! ValueError: polynomial is not in the ideal</span>
-</pre></div>
-</div>
+generated by <span class="math notranslate nohighlight">\(x ^ 2 - 4 x + 4=(x-2)^2\)</span>, but only to its radical.</p>
 <p>This can be worked around by applying a lemma such as <code class="docutils literal notranslate"><span class="pre">pow_eq_zero</span></code>, which states that if a power
 of an expression is zero then the expression is also zero.</p>
-<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">example</span> <span class="o">{</span><span class="n">x</span> <span class="o">:</span> <span class="n">&#8484;</span><span class="o">}</span> <span class="o">(</span><span class="n">hx</span> <span class="o">:</span> <span class="n">x</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">-</span> <span class="mi">4</span> <span class="bp">*</span> <span class="n">x</span> <span class="bp">=</span> <span class="bp">-</span> <span class="mi">4</span><span class="o">)</span> <span class="o">:</span> <span class="n">x</span> <span class="bp">=</span> <span class="mi">2</span> <span class="o">:=</span>
-<span class="kd">begin</span>
-  <span class="k">have</span> <span class="o">:</span> <span class="o">(</span><span class="n">x</span> <span class="bp">-</span> <span class="mi">2</span><span class="o">)</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">=</span> <span class="mi">0</span> <span class="o">:=</span> <span class="kd">by</span> <span class="n">polyrith</span><span class="o">,</span>
-  <span class="k">have</span> <span class="o">:=</span> <span class="n">pow_eq_zero</span> <span class="n">this</span><span class="o">,</span>
-  <span class="n">polyrith</span><span class="o">,</span>
-<span class="kd">end</span>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">example</span><span class="w"> </span><span class="o">{</span><span class="n">x</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#8484;</span><span class="o">}</span><span class="w"> </span><span class="o">(</span><span class="n">hx</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">-</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="bp">-</span><span class="mi">4</span><span class="o">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kd">by</span>
+<span class="w">  </span><span class="k">have</span><span class="w"> </span><span class="n">H</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="o">(</span><span class="n">x</span><span class="w"> </span><span class="bp">-</span><span class="w"> </span><span class="mi">2</span><span class="o">)</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kd">by</span><span class="w"> </span><span class="n">linear_combination</span><span class="w"> </span><span class="n">hx</span>
+<span class="w">  </span><span class="n">apply</span><span class="w"> </span><span class="n">pow_eq_zero</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="n">H</span>
+<span class="w">  </span><span class="n">linear_combination</span><span class="w"> </span><span class="n">H</span>
 </pre></div>
 </div>
-<p>The second problem arises when an argument requires the cancellation of a common factor.  In the
-following example <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> can deduce that <span class="math notranslate nohighlight">\((r-1)s=(r-1) (-2)\)</span>, but the lemma
-<code class="docutils literal notranslate"><span class="pre">mul_left_cancel&#8320;</span></code>, to cancel the common
-factor <span class="math notranslate nohighlight">\(r-1\)</span>, requires a separate <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> argument to show that it is nonzero.</p>
-<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">example</span> <span class="o">{</span><span class="n">r</span> <span class="n">s</span> <span class="o">:</span> <span class="n">&#8474;</span><span class="o">}</span> <span class="o">(</span><span class="n">hr</span> <span class="o">:</span> <span class="n">r</span> <span class="bp">&#8800;</span> <span class="mi">1</span><span class="o">)</span> <span class="o">(</span><span class="n">h</span> <span class="o">:</span> <span class="n">r</span> <span class="bp">*</span> <span class="n">s</span> <span class="bp">-</span> <span class="mi">2</span> <span class="bp">=</span> <span class="n">s</span> <span class="bp">-</span> <span class="mi">2</span> <span class="bp">*</span> <span class="n">r</span><span class="o">)</span> <span class="o">:</span> <span class="n">s</span> <span class="bp">=</span> <span class="bp">-</span><span class="mi">2</span> <span class="o">:=</span>
-<span class="kd">begin</span>
-  <span class="k">have</span> <span class="n">hr&#39;</span> <span class="o">:</span> <span class="n">r</span> <span class="bp">-</span> <span class="mi">1</span> <span class="bp">&#8800;</span> <span class="mi">0</span><span class="o">,</span>
-  <span class="o">{</span> <span class="n">contrapose</span><span class="bp">!</span> <span class="n">hr</span><span class="o">,</span>
-    <span class="n">polyrith</span> <span class="o">},</span>
-  <span class="n">apply</span> <span class="n">mul_left_cancel&#8320;</span> <span class="n">hr&#39;</span><span class="o">,</span>
-  <span class="n">polyrith</span><span class="o">,</span>
-<span class="kd">end</span>
+<p>This is a sufficiently common pattern that <code class="docutils literal notranslate"><span class="pre">linear_combination</span></code> provides a shorthand syntax,
+allowing you to specify the power of the goal polynomial
+which lies in the ideal generated by the hypothesis polynomials.</p>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="c1">-- hover over the `(exp := 2)` to get a useful explanation in a pop-up</span>
+<span class="kd">example</span><span class="w"> </span><span class="o">{</span><span class="n">x</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#8474;</span><span class="o">}</span><span class="w"> </span><span class="o">(</span><span class="n">hx</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">-</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="bp">-</span><span class="w"> </span><span class="mi">4</span><span class="o">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kd">by</span><span class="w"> </span><span class="n">linear_combination</span><span class="w"> </span><span class="o">(</span><span class="n">exp</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">2</span><span class="o">)</span><span class="w"> </span><span class="n">hx</span>
 </pre></div>
 </div>
-<p>It might also happen that you can prove a factored identity with <code class="docutils literal notranslate"><span class="pre">polyrith</span></code>, but don&#8217;t know
-which of the terms is zero &#8211; or either one could be. In this case you can carry out a case split
-using the lemma <code class="docutils literal notranslate"><span class="pre">eq_zero_or_eq_zero_of_mul_eq_zero</span></code> or similar.</p>
-<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">example</span> <span class="o">{</span><span class="n">r</span> <span class="n">s</span> <span class="o">:</span> <span class="n">&#8474;</span><span class="o">}</span> <span class="o">(</span><span class="n">h</span> <span class="o">:</span> <span class="n">r</span> <span class="bp">*</span> <span class="n">s</span> <span class="bp">-</span> <span class="mi">2</span> <span class="bp">=</span> <span class="n">s</span> <span class="bp">-</span> <span class="mi">2</span> <span class="bp">*</span> <span class="n">r</span><span class="o">)</span> <span class="o">:</span> <span class="n">true</span> <span class="o">:=</span>
-<span class="kd">begin</span>
-  <span class="k">have</span> <span class="o">:</span> <span class="o">(</span><span class="n">r</span> <span class="bp">-</span> <span class="mi">1</span><span class="o">)</span> <span class="bp">*</span> <span class="o">(</span><span class="n">s</span> <span class="bp">+</span> <span class="mi">2</span><span class="o">)</span> <span class="bp">=</span> <span class="mi">0</span> <span class="o">:=</span> <span class="kd">by</span> <span class="n">polyrith</span><span class="o">,</span>
-  <span class="n">cases</span> <span class="n">eq_zero_or_eq_zero_of_mul_eq_zero</span> <span class="n">this</span> <span class="k">with</span> <span class="n">H</span> <span class="n">H</span><span class="o">,</span>
-  <span class="o">{</span> <span class="gr">sorry</span> <span class="o">},</span> <span class="c1">-- the case `r - 1 = 0`</span>
-  <span class="o">{</span> <span class="gr">sorry</span> <span class="o">}</span> <span class="c1">-- the case `s + 2 = 0`</span>
-<span class="kd">end</span>
+<p>And in fact <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> can find certificates of this form too &#8211;
+there&#8217;s a &#8220;standard trick&#8221; for testing membership in the radical
+without doing a naive search for the exponent.
+Check out Section 2.2 of <a class="reference external" href="https://arxiv.org/abs/1007.3615v1">this article of Pottier</a>,
+or Section 4.2 of Cox, Little, O&#8217;Shea&#8217;s <em>Ideals, Varieties, and Algorithms</em>.</p>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">example</span><span class="w"> </span><span class="o">{</span><span class="n">x</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#8474;</span><span class="o">}</span><span class="w"> </span><span class="o">(</span><span class="n">hx</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">-</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="bp">-</span><span class="w"> </span><span class="mi">4</span><span class="o">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kd">by</span><span class="w"> </span><span class="n">polyrith</span>
+<span class="c1">-- produces `linear_combination (exp := 2) hx`</span>
+</pre></div>
+</div>
+<p>Here are a few more examples which <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> can solve in this way.
+Click through to see the certificates produced.</p>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">example</span><span class="w"> </span><span class="o">{</span><span class="n">a</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#8477;</span><span class="o">}</span><span class="w"> </span><span class="o">(</span><span class="n">h&#8321;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="o">)</span><span class="w"> </span><span class="o">(</span><span class="n">h&#8322;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="o">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kd">by</span>
+<span class="w">  </span><span class="n">polyrith</span>
+
+<span class="kd">example</span><span class="w"> </span><span class="o">{</span><span class="n">x</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#8474;</span><span class="o">}</span><span class="w"> </span><span class="o">(</span><span class="n">h&#8321;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="n">y</span><span class="o">)</span><span class="w"> </span><span class="o">(</span><span class="n">h&#8322;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="mi">0</span><span class="o">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kd">by</span>
+<span class="w">  </span><span class="n">polyrith</span>
+</pre></div>
+</div>
+<p>The second technique applies when,
+as is often the case in an algebraic problem,
+you have some information about <em>disequalities</em>
+(hypotheses <span class="math notranslate nohighlight">\(A\ne B\)</span>) as well as equalities.
+A convenient way to exploit such information when working with <code class="docutils literal notranslate"><span class="pre">polyrith</span></code>
+is to multiply the goal through by the quantity that is thus known to be nonzero.
+(That&#8217;s the backwards-reasoning description;
+the forwards-reasoning description is
+&#8220;prove a carefully constructed intermediate fact and then cancel the common nonzero factor&#8221;.)</p>
+<p>For example, consider the following problem.</p>
+<div class="admonition-problem admonition">
+<p class="admonition-title">Problem</p>
+<p>Let <span class="math notranslate nohighlight">\(z\)</span> be a complex number such that <span class="math notranslate nohighlight">\(z^3=1\)</span> and <span class="math notranslate nohighlight">\(z\ne 1\)</span>.
+Show that</p>
+<div class="math notranslate nohighlight">
+\[z^2+z+1 = 0.\]</div>
+</div>
+<p>To solve this problem, we note that since <span class="math notranslate nohighlight">\(z-1\ne 0\)</span>,
+it will suffice to prove that <span class="math notranslate nohighlight">\((z-1)(z^2+z+1)\ne (z-1)\cdot 0\)</span>.
+(The lemma <code class="docutils literal notranslate"><span class="pre">mul_left_cancel&#8320;</span></code> can perform this reduction.)
+The new goal is a <code class="docutils literal notranslate"><span class="pre">linear_combination</span></code> of the hypothesis <span class="math notranslate nohighlight">\(z^3=1\)</span>.</p>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">example</span><span class="w"> </span><span class="o">{</span><span class="n">z</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#8450;</span><span class="o">}</span><span class="w"> </span><span class="o">(</span><span class="n">h&#8321;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="mi">1</span><span class="o">)</span><span class="w"> </span><span class="o">(</span><span class="n">h&#8322;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="bp">&#8800;</span><span class="w"> </span><span class="mi">1</span><span class="o">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kd">by</span>
+<span class="w">  </span><span class="n">rw</span><span class="w"> </span><span class="o">[</span><span class="bp">&#8592;</span><span class="w"> </span><span class="n">sub_ne_zero</span><span class="o">]</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="n">h&#8322;</span>
+<span class="w">  </span><span class="n">apply</span><span class="w"> </span><span class="n">mul_left_cancel&#8320;</span><span class="w"> </span><span class="n">h&#8322;</span>
+<span class="w">  </span><span class="n">polyrith</span>
+</pre></div>
+</div>
+<p>Here are a couple of exercises along these lines.</p>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">example</span><span class="w"> </span><span class="o">{</span><span class="n">a</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#8484;</span><span class="o">}</span><span class="w"> </span><span class="o">(</span><span class="n">h&#8321;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">c</span><span class="o">)</span><span class="w"> </span><span class="o">(</span><span class="n">h&#8322;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">e</span><span class="o">)</span><span class="w"> </span><span class="o">(</span><span class="n">hd</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="bp">&#8800;</span><span class="w"> </span><span class="mi">0</span><span class="o">)</span><span class="w"> </span><span class="o">:</span>
+<span class="w">    </span><span class="n">a</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kd">by</span>
+<span class="w">  </span><span class="gr">sorry</span>
+
+<span class="kd">example</span><span class="w"> </span><span class="o">{</span><span class="n">r</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">&#8474;</span><span class="o">}</span><span class="w"> </span><span class="o">(</span><span class="n">hr</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="bp">&#8800;</span><span class="w"> </span><span class="mi">1</span><span class="o">)</span><span class="w"> </span><span class="o">(</span><span class="n">h</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="bp">-</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="bp">-</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">r</span><span class="o">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="bp">-</span><span class="mi">2</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kd">by</span>
+<span class="w">  </span><span class="gr">sorry</span>
 </pre></div>
 </div>
 </section>
 <section id="klein-quartic">
-<span id="klein"></span><h2><span class="section-number">3.2. </span>Klein quartic<a class="headerlink" href="#klein-quartic" title="Permalink to this headline">&#61633;</a></h2>
+<span id="klein"></span><h2><span class="section-number">3.2. </span>Klein quartic<a class="headerlink" href="#klein-quartic" title="Link to this heading">&#61633;</a></h2>
 <p>Fix a field <span class="math notranslate nohighlight">\(K\)</span> of characteristic zero. A homogenous polynomial in three variables <span class="math notranslate nohighlight">\(p(x,y,z)\)</span>
 defines an algebraic curve
 <span class="math notranslate nohighlight">\(\{[x:y:z]\in K\mathbb{P}^2:p(x,y,z)=0\}\)</span> in the projective plane <span class="math notranslate nohighlight">\(K\mathbb{P}^2\)</span>.</p>
@@ -149,11 +188,13 @@ projective plane.</p>
 <figure class="align-default" id="id1">
 <a class="reference internal image-reference" href="_images/klein_quartic.png"><img alt="the Klein quartic" src="_images/klein_quartic.png" style="width: 320.0px; height: 320.0px;" /></a>
 <figcaption>
-<p><span class="caption-number">Fig. 3.1 </span><span class="caption-text">The Klein quartic restricted to the real affine plane <span class="math notranslate nohighlight">\(x+y+z= 1\)</span>.</span><a class="headerlink" href="#id1" title="Permalink to this image">&#61633;</a></p>
+<p><span class="caption-number">Fig. 3.1 </span><span class="caption-text">The Klein quartic restricted to the real affine plane <span class="math notranslate nohighlight">\(x+y+z= 1\)</span>.</span><a class="headerlink" href="#id1" title="Link to this image">&#61633;</a></p>
 </figcaption>
 </figure>
-<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">@[reducible]</span> <span class="kd">def</span> <span class="n">klein</span> <span class="o">:</span> <span class="n">mv_polynomial</span> <span class="o">(</span><span class="n">fin</span> <span class="mi">3</span><span class="o">)</span> <span class="n">K</span> <span class="o">:=</span>
-<span class="n">X</span> <span class="mi">0</span> <span class="bp">^</span> <span class="mi">3</span> <span class="bp">*</span> <span class="n">X</span> <span class="mi">1</span> <span class="bp">+</span> <span class="n">X</span> <span class="mi">1</span> <span class="bp">^</span> <span class="mi">3</span> <span class="bp">*</span> <span class="n">X</span> <span class="mi">2</span> <span class="bp">+</span> <span class="n">X</span> <span class="mi">2</span> <span class="bp">^</span> <span class="mi">3</span> <span class="bp">*</span> <span class="n">X</span> <span class="mi">0</span>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="sd">/-- Defining polynomial for the Klein quartic curve x&#179;y + y&#179;z + z&#179;x = 0 as a projective</span>
+<span class="sd">hypersurface in K&#8473;&#178;. -/</span>
+<span class="n">abbrev</span><span class="w"> </span><span class="n">klein</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">MvPolynomial</span><span class="w"> </span><span class="o">(</span><span class="n">Fin</span><span class="w"> </span><span class="mi">3</span><span class="o">)</span><span class="w"> </span><span class="n">K</span><span class="w"> </span><span class="o">:=</span>
+<span class="w">  </span><span class="n">X</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">X</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="n">X</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">X</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="n">X</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">X</span><span class="w"> </span><span class="mi">0</span>
 </pre></div>
 </div>
 <p>The vector of partial derivatives of this polynomial is</p>
@@ -166,47 +207,42 @@ projective plane.</p>
 <p>We need to show that there is nowhere on the curve where these three cubic polynomials all vanish,
 or equivalently that if these three polynomials and the quartic <span class="math notranslate nohighlight">\(x^3y + y^3z + z^3x\)</span> all vanish
 then <span class="math notranslate nohighlight">\(x=y=z=0\)</span>.</p>
-<p>Here is a possible approach:  By eye, looking at appropriate multiples</p>
-<div class="math notranslate nohighlight">
-\[x(3x^2y + z ^ 3), \qquad y(x ^ 3 + 3y^2z), \qquad z(y ^ 3 + 3z ^ 2x)\]</div>
-<p>of the vector of partial derivatives, I can
-see that we have three different linear combinations of <span class="math notranslate nohighlight">\(x^3y\)</span>, <span class="math notranslate nohighlight">\(y^3z\)</span> and <span class="math notranslate nohighlight">\(z^3x\)</span>
-which vanish.  So use <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> to prove that, say, <span class="math notranslate nohighlight">\(y^3z=0\)</span>.</p>
-<p>Now do a case split, deducing that either <span class="math notranslate nohighlight">\(y^3 = 0\)</span> or <span class="math notranslate nohighlight">\(z = 0\)</span>.  Deduce using
-<code class="docutils literal notranslate"><span class="pre">pow_eq_zero</span></code> that in the former case <span class="math notranslate nohighlight">\(y = 0\)</span>.</p>
-<p>In either case, <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> now has enough information to deduce that the cubes of the remaining
-variables vanish.  Apply <code class="docutils literal notranslate"><span class="pre">pow_eq_zero</span></code> again to deduce that the variables themselves vanish.</p>
-<p>Once you have hypotheses <code class="docutils literal notranslate"><span class="pre">hx</span></code>, <code class="docutils literal notranslate"><span class="pre">hy</span></code>, <code class="docutils literal notranslate"><span class="pre">hz</span></code> for the vanishing of the three
-variables, you can solve the problem with <code class="docutils literal notranslate"><span class="pre">simp</span> <span class="pre">[hx,</span> <span class="pre">hy,</span> <span class="pre">hz]</span></code>.</p>
-<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">example</span> <span class="o">{</span><span class="n">x</span> <span class="n">y</span> <span class="n">z</span> <span class="o">:</span> <span class="n">K</span><span class="o">}</span> <span class="o">(</span><span class="n">h</span> <span class="o">:</span> <span class="n">mv_polynomial.eval</span> <span class="bp">!</span><span class="o">[</span><span class="n">x</span><span class="o">,</span> <span class="n">y</span><span class="o">,</span> <span class="n">z</span><span class="o">]</span> <span class="o">(</span><span class="n">klein</span> <span class="n">K</span><span class="o">)</span> <span class="bp">=</span> <span class="mi">0</span><span class="o">)</span>
-  <span class="o">(</span><span class="n">hdz</span> <span class="o">:</span> <span class="bp">&#8704;</span> <span class="n">i</span><span class="o">,</span> <span class="n">mv_polynomial.eval</span> <span class="bp">!</span><span class="o">[</span><span class="n">x</span><span class="o">,</span> <span class="n">y</span><span class="o">,</span> <span class="n">z</span><span class="o">]</span> <span class="o">(</span><span class="n">mv_polynomial.pderiv</span> <span class="n">i</span> <span class="o">(</span><span class="n">klein</span> <span class="n">K</span><span class="o">))</span> <span class="bp">=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">:</span>
-  <span class="bp">!</span><span class="o">[</span><span class="n">x</span><span class="o">,</span> <span class="n">y</span><span class="o">,</span> <span class="n">z</span><span class="o">]</span> <span class="bp">=</span> <span class="mi">0</span> <span class="o">:=</span>
-<span class="kd">begin</span>
-  <span class="k">have</span> <span class="o">:</span> <span class="mi">3</span> <span class="bp">-</span> <span class="mi">1</span> <span class="bp">=</span> <span class="mi">2</span> <span class="o">:=</span> <span class="kd">by</span> <span class="n">norm_num</span><span class="o">,</span>
-  <span class="k">have</span> <span class="n">h&#8320;</span> <span class="o">:=</span> <span class="n">hdz</span> <span class="mi">0</span><span class="o">,</span>
-  <span class="k">have</span> <span class="n">h&#8321;</span> <span class="o">:=</span> <span class="n">hdz</span> <span class="mi">1</span><span class="o">,</span>
-  <span class="k">have</span> <span class="n">h&#8322;</span> <span class="o">:=</span> <span class="n">hdz</span> <span class="mi">2</span><span class="o">,</span>
-  <span class="n">simp</span> <span class="n">only</span> <span class="o">[</span><span class="n">this</span><span class="o">]</span> <span class="k">with</span> <span class="n">poly_simps</span> <span class="n">at</span> <span class="n">h</span> <span class="n">h&#8320;</span> <span class="n">h&#8321;</span> <span class="n">h&#8322;</span> <span class="o">{</span><span class="n">discharger</span> <span class="o">:=</span> <span class="bp">`</span><span class="o">[</span><span class="n">norm_num1</span><span class="o">]},</span>
-  <span class="gr">sorry</span><span class="o">,</span>
-<span class="kd">end</span>
+<p><code class="docutils literal notranslate"><span class="pre">polyrith</span></code> can do this:
+it will find that <span class="math notranslate nohighlight">\(x^6\)</span>, <span class="math notranslate nohighlight">\(y^6\)</span> and <span class="math notranslate nohighlight">\(z^6\)</span> are all in the ideal generated by these four polynomials.
+Try it!</p>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="sd">/-- The Klein quartic is nonsingular. -/</span>
+<span class="kd">example</span><span class="w"> </span><span class="o">{</span><span class="n">x</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">K</span><span class="o">}</span><span class="w"> </span><span class="o">(</span><span class="n">h</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">MvPolynomial.eval</span><span class="w"> </span><span class="bp">!</span><span class="o">[</span><span class="n">x</span><span class="o">,</span><span class="w"> </span><span class="n">y</span><span class="o">,</span><span class="w"> </span><span class="n">z</span><span class="o">]</span><span class="w"> </span><span class="o">(</span><span class="n">klein</span><span class="w"> </span><span class="n">K</span><span class="o">)</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="mi">0</span><span class="o">)</span>
+<span class="w">    </span><span class="o">(</span><span class="n">hdz</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="bp">&#8704;</span><span class="w"> </span><span class="n">i</span><span class="o">,</span><span class="w"> </span><span class="n">MvPolynomial.eval</span><span class="w"> </span><span class="bp">!</span><span class="o">[</span><span class="n">x</span><span class="o">,</span><span class="w"> </span><span class="n">y</span><span class="o">,</span><span class="w"> </span><span class="n">z</span><span class="o">]</span><span class="w"> </span><span class="o">(</span><span class="n">MvPolynomial.pderiv</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">(</span><span class="n">klein</span><span class="w"> </span><span class="n">K</span><span class="o">))</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="mi">0</span><span class="o">)</span><span class="w"> </span><span class="o">:</span>
+<span class="w">    </span><span class="bp">!</span><span class="o">[</span><span class="n">x</span><span class="o">,</span><span class="w"> </span><span class="n">y</span><span class="o">,</span><span class="w"> </span><span class="n">z</span><span class="o">]</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kd">by</span>
+<span class="w">  </span><span class="k">have</span><span class="w"> </span><span class="n">h&#8320;</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">hdz</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">  </span><span class="k">have</span><span class="w"> </span><span class="n">h&#8321;</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">hdz</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">  </span><span class="k">have</span><span class="w"> </span><span class="n">h&#8322;</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">hdz</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">  </span><span class="n">simp</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="n">h&#8320;</span><span class="w"> </span><span class="n">h&#8321;</span><span class="w"> </span><span class="n">h&#8322;</span>
+<span class="w">  </span><span class="n">ext</span><span class="w"> </span><span class="n">i</span>
+<span class="w">  </span><span class="n">fin_cases</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="bp">&lt;;&gt;</span><span class="w"> </span><span class="n">dsimp</span>
+<span class="w">  </span><span class="bp">&#183;</span><span class="w"> </span><span class="n">polyrith</span>
+<span class="w">  </span><span class="bp">&#183;</span><span class="w"> </span><span class="n">polyrith</span>
+<span class="w">  </span><span class="bp">&#183;</span><span class="w"> </span><span class="n">polyrith</span>
 </pre></div>
 </div>
 </section>
 <section id="weierstrass-form-elliptic-curve">
-<span id="weierstrass"></span><h2><span class="section-number">3.3. </span>Weierstrass-form elliptic curve<a class="headerlink" href="#weierstrass-form-elliptic-curve" title="Permalink to this headline">&#61633;</a></h2>
+<span id="weierstrass"></span><h2><span class="section-number">3.3. </span>Weierstrass-form elliptic curve<a class="headerlink" href="#weierstrass-form-elliptic-curve" title="Link to this heading">&#61633;</a></h2>
 <p>Next, we consider an elliptic curve in Weierstrass normal form <span class="math notranslate nohighlight">\(zy^2 = x^3 + pxz^2 + qz^3\)</span>.</p>
 <figure class="align-default" id="id2">
 <a class="reference internal image-reference" href="_images/cubic.png"><img alt="a Weierstrass-normal-form elliptic curve" src="_images/cubic.png" style="width: 320.0px; height: 320.0px;" /></a>
 <figcaption>
-<p><span class="caption-number">Fig. 3.2 </span><span class="caption-text">A Weierstrass-normal-form elliptic curve with positive discriminant.</span><a class="headerlink" href="#id2" title="Permalink to this image">&#61633;</a></p>
+<p><span class="caption-number">Fig. 3.2 </span><span class="caption-text">A Weierstrass-normal-form elliptic curve with positive discriminant.</span><a class="headerlink" href="#id2" title="Link to this image">&#61633;</a></p>
 </figcaption>
 </figure>
 <p>We fix the parameters <span class="math notranslate nohighlight">\(p\)</span> and <span class="math notranslate nohighlight">\(q\)</span> explicitly.</p>
-<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">variables</span> <span class="o">(</span><span class="n">p</span> <span class="n">q</span> <span class="o">:</span> <span class="n">K</span><span class="o">)</span>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">variable</span><span class="w"> </span><span class="o">(</span><span class="n">p</span><span class="w"> </span><span class="n">q</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">K</span><span class="o">)</span>
 </pre></div>
 </div>
-<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">@[reducible]</span> <span class="kd">def</span> <span class="n">weierstrass</span> <span class="o">:</span> <span class="n">mv_polynomial</span> <span class="o">(</span><span class="n">fin</span> <span class="mi">3</span><span class="o">)</span> <span class="n">K</span> <span class="o">:=</span>
-<span class="bp">-</span> <span class="n">X</span> <span class="mi">2</span> <span class="bp">*</span> <span class="n">X</span> <span class="mi">1</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">+</span> <span class="n">X</span> <span class="mi">0</span> <span class="bp">^</span> <span class="mi">3</span> <span class="bp">+</span> <span class="n">C</span> <span class="n">p</span> <span class="bp">*</span> <span class="n">X</span> <span class="mi">0</span> <span class="bp">*</span> <span class="n">X</span> <span class="mi">2</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">+</span> <span class="n">C</span> <span class="n">q</span> <span class="bp">*</span> <span class="n">X</span> <span class="mi">2</span> <span class="bp">^</span> <span class="mi">3</span>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="sd">/-- Defining polynomial for a Weierstrass-form elliptic curve zy&#178; = x&#179; + pxz&#178; + qz&#179; as a</span>
+<span class="sd">projective hypersurface in K&#8473;&#178;. -/</span>
+<span class="n">abbrev</span><span class="w"> </span><span class="n">weierstrass</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">MvPolynomial</span><span class="w"> </span><span class="o">(</span><span class="n">Fin</span><span class="w"> </span><span class="mi">3</span><span class="o">)</span><span class="w"> </span><span class="n">K</span><span class="w"> </span><span class="o">:=</span>
+<span class="w">  </span><span class="bp">-</span><span class="n">X</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">X</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="n">X</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="n">C</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">X</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">X</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="n">C</span><span class="w"> </span><span class="n">q</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">X</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">3</span>
 </pre></div>
 </div>
 <p>The vector of partial derivatives of this polynomial is</p>
@@ -218,32 +254,35 @@ variables, you can solve the problem with <code class="docutils literal notransl
 \end{pmatrix}.\end{split}\]</div>
 <p>It turns out that a Weierstrass-form elliptic curve is nonsingular if its <em>discriminant</em>,
 <span class="math notranslate nohighlight">\(27q^2+4p^3\)</span>, does not vanish.  To prove this we need to show that if there is a (nonzero)
-point <span class="math notranslate nohighlight">\([x:y:z]\)</span> where the polynomial and its partial derivatives vanish, then
-<span class="math notranslate nohighlight">\(27q^2+4p^3\)</span> vanishes.</p>
-<p>A possible approach is as follows.  First do a case split depending on whether we are on the line
-at infinity, <span class="math notranslate nohighlight">\(z=0\)</span>.  If we are on the line at infinity, <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> will give you the
-vanishing of certain powers of <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> (you&#8217;ll need to work out which).  Apply
-<code class="docutils literal notranslate"><span class="pre">pow_eq_zero</span></code> as needed. Once you have hypotheses <code class="docutils literal notranslate"><span class="pre">hx</span></code>, <code class="docutils literal notranslate"><span class="pre">hy</span></code>, <code class="docutils literal notranslate"><span class="pre">hz</span></code> for the vanishing of the
-three variables, you can solve the problem with <code class="docutils literal notranslate"><span class="pre">simp</span> <span class="pre">[hx,</span> <span class="pre">hy,</span> <span class="pre">hz]</span></code>.</p>
-<p>Away from the line at infinity, we have that <span class="math notranslate nohighlight">\(z\ne 0\)</span>.  If the polynomial and its partial
-derivatives vanish at such an <span class="math notranslate nohighlight">\([x:y:z]\)</span>, we successively deduce that <span class="math notranslate nohighlight">\(y=0\)</span>, that
-<span class="math notranslate nohighlight">\(2 p x + 3 q z = 0\)</span>, that <span class="math notranslate nohighlight">\(9 q x - 2 p ^ 2 z=0\)</span>, and that <span class="math notranslate nohighlight">\(27q^2+4p^3=0\)</span>. For
-each of these four <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> deductions you will have to apply <code class="docutils literal notranslate"><span class="pre">mul_left_cancel&#8320;</span></code> with the
-nonvanishing of <span class="math notranslate nohighlight">\(z\)</span>: each time the expression itself is not in the ideal but its product with
-<span class="math notranslate nohighlight">\(z\)</span> is.</p>
-<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">example</span> <span class="o">{</span><span class="n">x</span> <span class="n">y</span> <span class="n">z</span> <span class="o">:</span> <span class="n">K</span><span class="o">}</span> <span class="o">(</span><span class="n">disc</span> <span class="o">:</span> <span class="mi">27</span> <span class="bp">*</span> <span class="n">q</span> <span class="bp">^</span> <span class="mi">2</span> <span class="bp">+</span> <span class="mi">4</span> <span class="bp">*</span> <span class="n">p</span> <span class="bp">^</span> <span class="mi">3</span> <span class="bp">&#8800;</span> <span class="mi">0</span><span class="o">)</span>
-  <span class="o">(</span><span class="n">h</span> <span class="o">:</span> <span class="n">mv_polynomial.eval</span> <span class="bp">!</span><span class="o">[</span><span class="n">x</span><span class="o">,</span> <span class="n">y</span><span class="o">,</span> <span class="n">z</span><span class="o">]</span> <span class="o">(</span><span class="n">weierstrass</span> <span class="n">K</span> <span class="n">p</span> <span class="n">q</span><span class="o">)</span> <span class="bp">=</span> <span class="mi">0</span><span class="o">)</span>
-  <span class="o">(</span><span class="n">hdz</span> <span class="o">:</span> <span class="bp">&#8704;</span> <span class="n">i</span><span class="o">,</span> <span class="n">mv_polynomial.eval</span> <span class="bp">!</span><span class="o">[</span><span class="n">x</span><span class="o">,</span> <span class="n">y</span><span class="o">,</span> <span class="n">z</span><span class="o">]</span> <span class="o">(</span><span class="n">mv_polynomial.pderiv</span> <span class="n">i</span> <span class="o">(</span><span class="n">weierstrass</span> <span class="n">K</span> <span class="n">p</span> <span class="n">q</span><span class="o">))</span> <span class="bp">=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">:</span>
-  <span class="bp">!</span><span class="o">[</span><span class="n">x</span><span class="o">,</span> <span class="n">y</span><span class="o">,</span> <span class="n">z</span><span class="o">]</span> <span class="bp">=</span> <span class="mi">0</span> <span class="o">:=</span>
-<span class="kd">begin</span>
-  <span class="k">have</span> <span class="n">three_sub</span> <span class="o">:</span> <span class="mi">3</span> <span class="bp">-</span> <span class="mi">1</span> <span class="bp">=</span> <span class="mi">2</span> <span class="o">:=</span> <span class="kd">by</span> <span class="n">norm_num</span><span class="o">,</span>
-  <span class="k">have</span> <span class="n">two_sub</span> <span class="o">:</span> <span class="mi">2</span> <span class="bp">-</span> <span class="mi">1</span> <span class="bp">=</span> <span class="mi">1</span> <span class="o">:=</span> <span class="kd">by</span> <span class="n">norm_num</span><span class="o">,</span>
-  <span class="k">have</span> <span class="n">h&#8320;</span> <span class="o">:=</span> <span class="n">hdz</span> <span class="mi">0</span><span class="o">,</span>
-  <span class="k">have</span> <span class="n">h&#8321;</span> <span class="o">:=</span> <span class="n">hdz</span> <span class="mi">1</span><span class="o">,</span>
-  <span class="k">have</span> <span class="n">h&#8322;</span> <span class="o">:=</span> <span class="n">hdz</span> <span class="mi">2</span><span class="o">,</span>
-  <span class="n">simp</span> <span class="n">only</span> <span class="o">[</span><span class="n">three_sub</span><span class="o">,</span> <span class="n">two_sub</span><span class="o">]</span> <span class="k">with</span> <span class="n">poly_simps</span> <span class="n">at</span> <span class="n">h</span> <span class="n">h&#8320;</span> <span class="n">h&#8321;</span> <span class="n">h&#8322;</span> <span class="o">{</span><span class="n">discharger</span> <span class="o">:=</span> <span class="bp">`</span><span class="o">[</span><span class="n">norm_num1</span><span class="o">]},</span>
-  <span class="gr">sorry</span><span class="o">,</span>
-<span class="kd">end</span>
+point <span class="math notranslate nohighlight">\([x:y:z]\)</span> where the polynomial and its partial derivatives vanish and
+<span class="math notranslate nohighlight">\(27q^2+4p^3\)</span> does not, then <span class="math notranslate nohighlight">\(x=y=z=0\)</span>.</p>
+<p>To make use of a nonzeroness condition,
+it is useful to multiply the goal through by the nonzero quantity:
+in this case the goal <span class="math notranslate nohighlight">\((27q^2+4p^3)x=(27q^2+4p^3) \cdot 0\)</span> is accessible to <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> although <span class="math notranslate nohighlight">\(x=0\)</span> is not.
+The lemma <code class="docutils literal notranslate"><span class="pre">mul_left_cancel&#8320;</span></code> will be helpful here.</p>
+<p><code class="docutils literal notranslate"><span class="pre">polyrith</span></code> should show you that <span class="math notranslate nohighlight">\(\left((27q^2+4p^3)x\right)^4\)</span>,
+<span class="math notranslate nohighlight">\(\left((27q^2+4p^3)y\right)^3\)</span> and <span class="math notranslate nohighlight">\(\left((27q^2+4p^3)z\right)^5\)</span>
+are all in the ideal generated by the four hypothesis polynomials.</p>
+<p>The coefficients are pretty wild &#8211; I saw numbers like 944,784 and 2,204,496.
+If you like, you can get shorter <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> certificates at the cost of more setup.
+The polynomials <span class="math notranslate nohighlight">\((27q^2+4p^3)x^4\)</span>, <span class="math notranslate nohighlight">\((27q^2+4p^3)y^3\)</span> and <span class="math notranslate nohighlight">\((27q^2+4p^3)z^5\)</span> are all in the ideal as well,
+and you can reduce the problem to these three goals by some initial work with the lemmas <code class="docutils literal notranslate"><span class="pre">pow_eq_zero</span></code> and <code class="docutils literal notranslate"><span class="pre">mul_left_cancel&#8320;</span></code>.</p>
+<div class="highlight-lean notranslate"><div class="highlight"><pre><span></span><span class="kd">set_option</span><span class="w"> </span><span class="n">maxHeartbeats</span><span class="w"> </span><span class="mi">500000</span><span class="w"> </span><span class="k">in</span>
+<span class="sd">/-- A Weierstrass-form elliptic curve with nonzero discriminant `27 * q ^ 2 + 4 * p ^ 3` is</span>
+<span class="sd">nonsingular. -/</span>
+<span class="kd">example</span><span class="w"> </span><span class="o">{</span><span class="n">x</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">K</span><span class="o">}</span><span class="w"> </span><span class="o">(</span><span class="n">disc</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">27</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">q</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="bp">+</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="bp">*</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="bp">^</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="bp">&#8800;</span><span class="w"> </span><span class="mi">0</span><span class="o">)</span>
+<span class="w">    </span><span class="o">(</span><span class="n">h</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">MvPolynomial.eval</span><span class="w"> </span><span class="bp">!</span><span class="o">[</span><span class="n">x</span><span class="o">,</span><span class="w"> </span><span class="n">y</span><span class="o">,</span><span class="w"> </span><span class="n">z</span><span class="o">]</span><span class="w"> </span><span class="o">(</span><span class="n">weierstrass</span><span class="w"> </span><span class="n">K</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="n">q</span><span class="o">)</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="mi">0</span><span class="o">)</span>
+<span class="w">    </span><span class="o">(</span><span class="n">hdz</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="bp">&#8704;</span><span class="w"> </span><span class="n">i</span><span class="o">,</span><span class="w"> </span><span class="n">MvPolynomial.eval</span><span class="w"> </span><span class="bp">!</span><span class="o">[</span><span class="n">x</span><span class="o">,</span><span class="w"> </span><span class="n">y</span><span class="o">,</span><span class="w"> </span><span class="n">z</span><span class="o">]</span><span class="w"> </span><span class="o">(</span><span class="n">MvPolynomial.pderiv</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">(</span><span class="n">weierstrass</span><span class="w"> </span><span class="n">K</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="n">q</span><span class="o">))</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="mi">0</span><span class="o">)</span><span class="w"> </span><span class="o">:</span>
+<span class="w">    </span><span class="bp">!</span><span class="o">[</span><span class="n">x</span><span class="o">,</span><span class="w"> </span><span class="n">y</span><span class="o">,</span><span class="w"> </span><span class="n">z</span><span class="o">]</span><span class="w"> </span><span class="bp">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kd">by</span>
+<span class="w">  </span><span class="k">have</span><span class="w"> </span><span class="n">h&#8320;</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">hdz</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">  </span><span class="k">have</span><span class="w"> </span><span class="n">h&#8321;</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">hdz</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">  </span><span class="k">have</span><span class="w"> </span><span class="n">h&#8322;</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">hdz</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">  </span><span class="n">simp</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="n">h&#8320;</span><span class="w"> </span><span class="n">h&#8321;</span><span class="w"> </span><span class="n">h&#8322;</span>
+<span class="w">  </span><span class="n">ext</span><span class="w"> </span><span class="n">i</span>
+<span class="w">  </span><span class="n">fin_cases</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="bp">&lt;;&gt;</span><span class="w"> </span><span class="n">dsimp</span>
+<span class="w">  </span><span class="bp">&#183;</span><span class="w"> </span><span class="gr">sorry</span>
+<span class="w">  </span><span class="bp">&#183;</span><span class="w"> </span><span class="gr">sorry</span>
+<span class="w">  </span><span class="bp">&#183;</span><span class="w"> </span><span class="gr">sorry</span>
 </pre></div>
 </div>
 </section>
@@ -260,7 +299,7 @@ nonvanishing of <span class="math notranslate nohighlight">\(z\)</span>: each ti
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Heather Macbeth.</p>
+    <p>&#169; Copyright 2022-2024, Heather Macbeth.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
