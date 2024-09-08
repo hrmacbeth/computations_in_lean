@@ -31,7 +31,7 @@ example {x y z : K} (h : MvPolynomial.eval ![x, y, z] (klein K) = 0)
   have h₀ := hdz 0
   have h₁ := hdz 1
   have h₂ := hdz 2
-  simp at h h₀ h₁ h₂
+  simp [map_ofNat] at h h₀ h₁ h₂
   ext i
   fin_cases i <;> dsimp
   · polyrith
@@ -50,7 +50,6 @@ projective hypersurface in Kℙ². -/
 abbrev weierstrass : MvPolynomial (Fin 3) K :=
   -X 2 * X 1 ^ 2 + X 0 ^ 3 + C p * X 0 * X 2 ^ 2 + C q * X 2 ^ 3
 
-set_option maxHeartbeats 500000 in
 /-- A Weierstrass-form elliptic curve with nonzero discriminant `27 * q ^ 2 + 4 * p ^ 3` is
 nonsingular. -/
 example {x y z : K} (disc : 27 * q ^ 2 + 4 * p ^ 3 ≠ 0)
@@ -60,7 +59,7 @@ example {x y z : K} (disc : 27 * q ^ 2 + 4 * p ^ 3 ≠ 0)
   have h₀ := hdz 0
   have h₁ := hdz 1
   have h₂ := hdz 2
-  simp at h h₀ h₁ h₂
+  simp [map_ofNat] at h h₀ h₁ h₂
   ext i
   fin_cases i <;> dsimp
   · sorry

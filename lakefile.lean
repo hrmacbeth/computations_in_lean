@@ -11,4 +11,4 @@ lean_lib PolyrithTutorial {
   -- add library configuration options here
 }
 
-require mathlib from git "https://github.com/leanprover-community/mathlib4" @ s!"8932a3d688d2bbf500429c4c888de4181086aad5"
+require mathlib from git "https://github.com/leanprover-community/mathlib4" @ s!"v{Lean.versionString}"

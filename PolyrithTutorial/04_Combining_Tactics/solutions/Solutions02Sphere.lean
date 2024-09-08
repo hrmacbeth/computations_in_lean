@@ -4,7 +4,7 @@ Adapted from mathlib, released under Apache 2.0 license as described in that rep
 Authors: Heather Macbeth
 -/
 import Mathlib.Data.Real.Basic
-import Mathlib.GroupTheory.GroupAction.Prod
+import Mathlib.Algebra.Group.Action.Prod
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Polyrith
 

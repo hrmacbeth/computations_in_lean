@@ -141,7 +141,7 @@ this proof you should determine precisely which input values these facts are bei
 above proof, and state them in Lean with those input values.  See the broken proof below for the
 basic idea.</p>
 <p>There is one subtlety. It will happen that the same natural number appears as the index of the
-sequence <cite>T</cite>, but in more than one way.  For example, in the setup below, both <code class="docutils literal notranslate"><span class="pre">k</span> <span class="pre">*</span> <span class="pre">37</span></code> and
+sequence <code class="docutils literal notranslate"><span class="pre">T</span></code>, but in more than one way.  For example, in the setup below, both <code class="docutils literal notranslate"><span class="pre">k</span> <span class="pre">*</span> <span class="pre">37</span></code> and
 <code class="docutils literal notranslate"><span class="pre">37</span> <span class="pre">*</span> <span class="pre">k</span></code> appear as indices.  This prevents <code class="docutils literal notranslate"><span class="pre">polyrith</span></code> from parsing <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">(k</span> <span class="pre">*</span> <span class="pre">37)</span></code> and
 <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">(37</span> <span class="pre">*</span> <span class="pre">k)</span></code> as the same token.  So, before running <code class="docutils literal notranslate"><span class="pre">polyrith</span></code>, normalize all indices by
 running <code class="docutils literal notranslate"><span class="pre">ring_nf</span></code> (&#8220;ring normal form&#8221;) simultaneously on all the hypotheses you care about and on
