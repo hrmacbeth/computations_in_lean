@@ -42,5 +42,4 @@ theorem mul_T : ∀ m : ℕ, ∀ k, 2 * T m * T (m + k) = T (2 * m + k) + T k
     have h₂ := T_add_two (2 * m + k + 2)
     have h₃ := T_add_two k
     ring_nf at H₁ H₂ h₁ h₂ h₃ ⊢
-    -- FIXME polyrith needs a type annotation
-    linear_combination 2 * (X : ℤ[X]) * H₁ - 1 * H₂ + 2 * T (2 + m + k) * h₁ - 1 * h₂ - 1 * h₃
+    linear_combination 2 * X * H₁ - 1 * H₂ + 2 * T (2 + m + k) * h₁ - 1 * h₂ - 1 * h₃
