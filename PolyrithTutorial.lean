@@ -4,8 +4,8 @@ import PolyrithTutorial.«01_Basics_of_Polyrith».«04Polyrith»
 import PolyrithTutorial.«02_Using_Polyrith».«01Chebyshev»
 import PolyrithTutorial.«02_Using_Polyrith».«02IsometryPlane»
 import PolyrithTutorial.«02_Using_Polyrith».«03DoubleCover»
-import PolyrithTutorial.«03_Nonsingularity_Of_Curves».«01PowersCaseSplits»
-import PolyrithTutorial.«03_Nonsingularity_Of_Curves».«02ProjectiveCurves»
+import PolyrithTutorial.«03_Nonsingularity_of_Curves».«01PowersCaseSplits»
+import PolyrithTutorial.«03_Nonsingularity_of_Curves».«02ProjectiveCurves»
 import PolyrithTutorial.«04_Combining_Tactics».«01FieldSimp»
 import PolyrithTutorial.«04_Combining_Tactics».«02Sphere»
 import PolyrithTutorial.«04_Combining_Tactics».«03Binomial»
